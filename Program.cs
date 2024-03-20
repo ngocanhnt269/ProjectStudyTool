@@ -1,5 +1,11 @@
 var builder = WebApplication.CreateBuilder(args);
 
+// ***** Connect to OpenAI API *****
+string _endpoint = System.Configuration.ConfigurationManager.AppSettings["endpoint"]!;
+string _apikey = System.Configuration.ConfigurationManager.AppSettings["api-key"]!;
+string _deploymentname = System.Configuration.ConfigurationManager.AppSettings["deployment-name"]!;
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -10,7 +16,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
