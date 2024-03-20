@@ -28,4 +28,23 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    // Get user's study contents on Home page
+    [HttpPost]
+    public IActionResult Index(string userContent) {
+        if (!ValidateContent(userContent)) {
+            Console.WriteLine("Empty user content");
+            return View();
+        }
+        Console.WriteLine(userContent);
+        return View();
+    }
+
+    // Validate user's study contents
+    public bool ValidateContent(string userContent) {
+        if (string.IsNullOrEmpty(userContent)) {
+            return false;
+        }
+        return true;
+    }
 }
