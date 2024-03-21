@@ -1,5 +1,3 @@
-
-
 namespace ProjectStudyTool.Data;
 public static class SeedData
 {

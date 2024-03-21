@@ -31,8 +31,10 @@ public class HomeController : Controller
 
     // Get user's study contents on Home page
     [HttpPost]
-    public IActionResult Index(string userContent) {
-        if (!ValidateContent(userContent)) {
+    public IActionResult Index(string userContent)
+    {
+        if (!ValidateContent(userContent))
+        {
             Console.WriteLine("Empty user content");
             return View();
         }
@@ -41,8 +43,10 @@ public class HomeController : Controller
     }
 
     // Validate user's study contents
-    public bool ValidateContent(string userContent) {
-        if (string.IsNullOrEmpty(userContent)) {
+    public bool ValidateContent(string userContent)
+    {
+        if (string.IsNullOrEmpty(userContent))
+        {
             return false;
         }
         return true;
