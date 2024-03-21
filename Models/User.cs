@@ -9,7 +9,7 @@ public class User
     public string? Username { get; set; }
     [Required]
     public string? Password { get; set; }
-    
+
     // uncomment the following line when we have the CardSet model
-    // public List<CardSet>? CardSets { get; set; }
+    public List<CardSet>? CardSets { get; set; }
 }
