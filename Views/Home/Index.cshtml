@@ -8,9 +8,10 @@
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
     <form method="post">
-        <textarea id="userContent" placeholder="Enter study contents here" name="userContent" cols="150" rows="10"
-            oninput="updateCharacterCount()" maxlength="@ViewData["MAX_LENGTH"]"></textarea>
-
+        <textarea id="userContent" placeholder="Enter study contents here" 
+        name="userContent" cols="150" rows="10" oninput="updateCharacterCount()"
+        maxlength='@ViewData["MAX_LENGTH"]' ></textarea>
+        
         <div class="d-flex justify-content-between">
             <div>
                 <input type="submit" value="Generate" />
@@ -23,7 +24,9 @@
     </form>
 </div>
 
-
+@* <div>
+    <component type="typeof(ProjectStudyTool.Components.Home.PromptForm)" render-mode="ServerPrerendered" />
+</div> *@
 
 <script>
     let content = document.getElementById('userContent');

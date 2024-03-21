@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjectStudyTool.Data;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,15 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+// For razor/blazor components
+builder.Services
+.AddRazorComponents()
+.AddInteractiveServerComponents()
+.AddCircuitOptions(options => options.DetailedErrors = true); // for debugging razor components
+
+// Add Radzen services
+builder.Services.AddRadzenComponents();
 
 var app = builder.Build();
 
