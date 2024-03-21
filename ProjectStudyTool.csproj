@@ -27,10 +27,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
-
-
-
-
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.2" />
+    <PackageReference Include="Radzen.Blazor" Version="*" />
   </ItemGroup>
 
 </Project>
