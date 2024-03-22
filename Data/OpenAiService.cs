@@ -1,0 +1,61 @@
+﻿using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+
+namespace ProjectStudyTool;
+
+public class OpenAiService
+{
+  private readonly string endpoint;
+  private readonly string apiKey;
+  private readonly string model;
+
+  public OpenAiService()
+  {
+    endpoint = System.Configuration.ConfigurationManager.AppSettings["endpoint"]!;
+    apiKey = System.Configuration.ConfigurationManager.AppSettings["api-key"]!;
+    model = System.Configuration.ConfigurationManager.AppSettings["model"]!;
+  }
+
+  public async Task<IReadOnlyList<ChatMessageContent>> UseOpenAiService(string userContent)
+  {
+    // Create a new OpenAI chat completion service
+    var builder = Kernel.CreateBuilder();
+    builder.AddOpenAIChatCompletion(model, apiKey);
+    var kernel = builder.Build();
+
+    // Set any prompt execution settings
+    // There are more than this, but only selected the relevant ones
+    // 1000 characters is roughly 750 tokens according to OpenAI
+    var executionSettings = new OpenAIPromptExecutionSettings
+    {
+      MaxTokens = 750,
+      Temperature = 1
+    };
+
+    /*
+        Make the AI generate flashcard questions and answers from user input.
+        Can add more messages to make the responses more specific:
+            - AddSystemMessage = instructions or other guidance about how the AI assistant should behave
+            - AddUserMessage = current or historical user input
+            - AddAssistantMessage = the AI assistant's response to the user input
+        Reference: https://techcommunity.microsoft.com/t5/educator-developer-blog/how-to-use-semantickernel-with-openai-and-azure-openai-in-c/ba-p/4081648
+    */
+    var chat = kernel.GetRequiredService<IChatCompletionService>();
+    var chatHistory = new ChatHistory();
+    var instructions = "Generate flashcards from the provided text. Generate at least 5 flashcards."
+        + " The flashcards are in a question-and-answer format and/or keyword-and-explanation format. "
+        + "The questions should be based on the text provided. The answers should be concise and based on the text.";
+    var restrictions = "If there is not enough information to generate at least 5 flashcards, "
+        + " say there is not enough information.";
+    chatHistory.AddSystemMessage(instructions);
+    chatHistory.AddSystemMessage(restrictions);
+    chatHistory.AddUserMessage(userContent);
+    var response = await chat.GetChatMessageContentsAsync(chatHistory, executionSettings);
+    var responseContent = response[^1].Content;
+    Console.WriteLine(responseContent);
+
+    return response;
+  }
+
+}

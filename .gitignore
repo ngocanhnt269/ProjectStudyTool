@@ -485,6 +485,7 @@ $RECYCLE.BIN/
 *.swp
 
 appsettings.json
+App.config
 
 QuizWhiz.SQLite
 QuizWhiz.SQLite-shm
