@@ -29,7 +29,7 @@ public class OpenAiService
     // 1000 characters is roughly 750 tokens according to OpenAI
     var executionSettings = new OpenAIPromptExecutionSettings
     {
-      MaxTokens = 750,
+      MaxTokens = 1500,
       Temperature = 1
     };
 
@@ -43,13 +43,12 @@ public class OpenAiService
     */
     var chat = kernel.GetRequiredService<IChatCompletionService>();
     var chatHistory = new ChatHistory();
-    var instructions = "Generate flashcards from the provided text. Generate at least 5 flashcards."
-        + " The flashcards are in a question-and-answer format and/or keyword-and-explanation format. "
-        + "The questions should be based on the text provided. The answers should be concise and based on the text.";
-    var restrictions = "If there is not enough information to generate at least 5 flashcards, "
-        + " say there is not enough information.";
+    var instructions = "Generate flashcards content from the provided text. "
+        + " Generate at least 20 to 100 questions and answers. "
+        + " Questions should be numbered QUESTION #. Answers should start with ANSWER #: "
+        + " The flashcards are in a question-and-answer or keyword-and-explanation format. "
+        + " The questions should be based on the text provided. The answers should be concise and based on the text.";
     chatHistory.AddSystemMessage(instructions);
-    chatHistory.AddSystemMessage(restrictions);
     chatHistory.AddUserMessage(userContent);
     var response = await chat.GetChatMessageContentsAsync(chatHistory, executionSettings);
     var responseContent = response[^1].Content;
