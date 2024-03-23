@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ProjectStudyTool.Models;
 
 namespace ProjectStudyTool.Controllers;
 
@@ -35,7 +34,7 @@ public class HomeController : Controller
 
     // Get user's study contents on Home page
     [HttpPost]
-    public IActionResult Index(string userContent)
+    public async Task<IActionResult> IndexAsync(string userContent)
     {
         if (!ValidateContent(userContent))
         {
@@ -43,6 +42,9 @@ public class HomeController : Controller
             return View();
         }
         Console.WriteLine(userContent);
+        var openAiService = new OpenAiService();
+        var response = await openAiService.UseOpenAiService(userContent);
+        ViewBag.ResponseContent = response[^1].Content;       
         return View();
     }
 
