@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Test";
+    
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h2>Creates default cards</h2>
+    <form asp-action="CreateDefaultCardSet" asp-controller="Home" method="post">
+        <p>Will load default cardset to user with id 1</p>
+        <button type="submit">Create default Cardset</button>
+    </form>
+</div>
+<div>
+    <h2>Creates cardset from text</h2>
+    <form asp-controller="Home" asp-action="CreateCardSetFromText" method="post">
+        <div>
+            <label for="text">Text:</label>
+            <textarea id="text" name="text"></textarea>
+        </div>
+        <div>
+            <label for="name">Name of CardSet e.g. "Linux lecture 1":</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <div>
+            <label for="userId">User ID:</label>
+            <input type="number" id="userId" name="userId">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div>
+    <h2>Get cards by cardset id</h2>
+    <form asp-controller="Home" asp-action="GetCardsByCardSetId" method="post">
+        <div>
+            <label for="cardSetId">CardSet Id:</label>
+            <input type="number" id="cardSetId" name="cardSetId">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div>
+    <h2>Get CardSets by UserId</h2>
+    <form asp-controller="Home" asp-action="GetCardSetsByUserId" method="post">
+        <div>
+            <label for="userId1">User Id:</label>
+            <input type="number" id="userId1" name="userId1">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
