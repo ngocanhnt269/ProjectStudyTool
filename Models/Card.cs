@@ -9,11 +9,14 @@ namespace ProjectStudyTool.Models;
 public class Card
 {
     [Key]
+    [Display(Name = "Card ID")]
     public int CardId { get; set; }
 
     [ForeignKey("CardSet")]
+    [Display(Name = "Card Set ID")]
     public int CardSetId { get; set; }
 
+    [Display(Name = "Card Number")]
     public int QuestionId { get; set; }
 
     [Required(ErrorMessage = "Question is required")]

@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ProjectStudyTool.Models;
 
 namespace ProjectStudyTool.Data;
 
@@ -15,6 +16,10 @@ public class ApplicationDbContext : IdentityDbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<User>().Property(u => u.UserId).IsRequired();
         modelBuilder.Entity<User>().ToTable("User");
-        modelBuilder.Seed();
+        // modelBuilder.Seed();
     }
+
+public DbSet<ProjectStudyTool.Models.Card> Card { get; set; } = default!;
+
+public DbSet<ProjectStudyTool.Models.CardSet> CardSet { get; set; } = default!;
 }
