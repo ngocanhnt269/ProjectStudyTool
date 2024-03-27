@@ -483,3 +483,12 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+appsettings.json
+App.config
+
+QuizWhiz.SQLite
+QuizWhiz.SQLite-shm
+QuizWhiz.SQLite-wal
+
+Data/Migrations/
