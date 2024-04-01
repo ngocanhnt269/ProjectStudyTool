@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ProjectStudyTool.Models;
 
 namespace ProjectStudyTool.Data;
 
@@ -10,5 +11,4 @@ public class ApplicationDbContext : IdentityDbContext
     {
     }
     public DbSet<User>? User { get; set; } = default!;
-
 }
