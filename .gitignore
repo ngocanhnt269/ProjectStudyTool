@@ -491,4 +491,4 @@ QuizWhiz.SQLite
 QuizWhiz.SQLite-shm
 QuizWhiz.SQLite-wal
 
-Data/Migrations/
+App.config
