@@ -1,5 +1,5 @@
 @model IEnumerable<ProjectStudyTool.Models.Card>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 @{
     ViewData["Title"] = "Index";
 }
@@ -42,7 +42,7 @@
                     @Html.DisplayFor(modelItem => item.Answer)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CardSet.Name)
+                    @Html.DisplayFor(modelItem => item.CardSet!.Name)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.CardId">Edit</a> |
@@ -54,63 +54,14 @@
     </tbody>
 </table>
 
-<div id="flashcard-container" style="display: flex; justify-content: center;">
-    @foreach (var item in Model)
-    {
-        <div class="flashcard" onclick="toggleFlashcard(this)">
-            <div class="question">@Html.DisplayFor(modelItem => item.Question)</div>
-            <div class="answer" style="display: none;">@Html.DisplayFor(modelItem => item.Answer)</div>
-        </div>
-    }
+<div id="flashcard-container">
+    <div id="flashcard" class="flashcard" onclick="toggleFlashcard()">
+        <div class="question">@Html.DisplayFor(model => model.FirstOrDefault()!.Question)</div>
+        <div class="answer" style="display: none;">@Html.DisplayFor(model => model.FirstOrDefault()!.Answer)</div>
+    </div>
 </div>
 
-<style>
-    body,
-    html {
-        height: 100%;
-        margin: 0;
-    }
-
-    table {
-        margin-bottom: 20px;
-    }
-
-    .flashcard {
-        width: 900px;
-        height: 500px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        perspective: 400px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        margin-right: 10px;
-        margin-bottom: 10px;
-    }
-
-    .question,
-    .answer {
-        padding: 10px;
-        font-size: 20px;
-    }
-</style>
-
-<script>
-    function toggleFlashcard(flashcard) {
-        var question = flashcard.querySelector('.question');
-        var answer = flashcard.querySelector('.answer');
-
-        if (question.style.display === 'none') {
-            question.style.display = 'block';
-            answer.style.display = 'none';
-        } else {
-            question.style.display = 'none';
-            answer.style.display = 'block';
-        }
-    }
-</script>
+<div id="navigation-arrows">
+    <button onclick="previousFlashcard()"><i class="fas fa-arrow-left"></i></button>
+    <button onclick="nextFlashcard()"><i class="fas fa-arrow-right"></i></button>
+</div>
