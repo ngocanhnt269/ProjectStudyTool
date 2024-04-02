@@ -22,8 +22,26 @@ namespace ProjectStudyTool.Controllers
         // GET: Card
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Card.Include(c => c.CardSet);
-            return View(await applicationDbContext.ToListAsync());
+            // var applicationDbContext = _context.Card.Include(c => c.CardSet);
+            // return View(await applicationDbContext.ToListAsync());
+            var fakeCard = new Card
+            {
+                CardId = 1,
+                CardSetId = 1, // Assuming CardSetId exists in your database
+                QuestionId = 1,
+                Question = "What is the capital of France?",
+                Answer = "Paris",
+                CardSet = new CardSet { CardSetId = 1, Name = "Geography" } // Assuming CardSet is related to Card
+            };
+
+            // Add the fake card to a list
+            var fakeCardList = new List<Card> { fakeCard };
+
+            // Combine the fake card list with real database data
+            var cardList = await _context.Card.Include(c => c.CardSet).ToListAsync();
+            cardList.AddRange(fakeCardList);
+
+            return View(cardList);
         }
 
         // GET: Card/Details/5
