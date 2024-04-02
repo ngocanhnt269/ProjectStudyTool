@@ -2,11 +2,16 @@
 @inject ApplicationDbContext dbContext
 @inject NavigationManager NavigationManager
 
-<div class="rz-p-12 rz-text-align-center">
+<div class="rz-px-12 rz-text-align-center">
   <RadzenColumn Size="12">
-    <RadzenFormField Text="Enter study contents here" Variant="@variant">
-      <RadzenTextArea @bind-Value="@value" />
+    <RadzenFormField Text="Enter study contents here" Variant="@variant" >
+      <RadzenTextArea @bind-Value="@value" Cols="120" Rows="15" 
+        id="userContent" oninput="updateCharacterCount()" Name="userContent" MaxLength=@MAX_LENGTH
+        />
     </RadzenFormField>
+  <div class="">
+    <div id="characterCount">@value.Length/@MAX_LENGTH characters</div>
+  </div>
   </RadzenColumn>
 </div>
 
@@ -14,9 +19,18 @@
 @code {
   Variant variant = Variant.Outlined;
   string value = "";
+  const int MAX_LENGTH = 2000;
 
   protected override async Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
   }
 }
+
+<script>
+  function updateCharacterCount() {
+    var text = document.getElementById("userContent").value;
+    var count = text.length;
+    document.getElementById("characterCount").innerText = count + "/" + @MAX_LENGTH + " characters";
+  }
+</script>

@@ -19,7 +19,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+    options.SignIn.RequireConfirmedAccount = true; //require email confirmation
+    options.Stores.MaxLengthForKeys = 128; // increase key for encrypting password
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
@@ -61,5 +64,17 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+//seed data
+using (var scope = app.Services.CreateScope()) {
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<ApplicationDbContext>();    
+    context.Database.Migrate();
+
+    var userMgr = services.GetRequiredService<UserManager<IdentityUser>>();  
+
+    IdentitySeedData.Initialize(context, userMgr).Wait();
+}
 
 app.Run();

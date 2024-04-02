@@ -8,6 +8,7 @@ namespace ProjectStudyTool.Models;
 public class CardSet
 {
     [Key]
+    [Display(Name = "Card Set ID")]
     public int CardSetId { get; set; }
 
     [ForeignKey("User")]
