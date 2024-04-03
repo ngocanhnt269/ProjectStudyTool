@@ -1,14 +1,18 @@
 @model IEnumerable<ProjectStudyTool.Models.Card>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 @{
+    var loggedIn = User.Identity!.IsAuthenticated;
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+@if (loggedIn) {
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
 
 <table class="table">
     <thead>
@@ -22,9 +26,13 @@
             <th>
                 @Html.DisplayNameFor(model => model.Answer)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CardSet)
-            </th>
+            @if (loggedIn) {
+                <th>
+                    @Html.DisplayNameFor(model => model.CardSet)
+                </th>
+            
+                <th></th>
+            }
             <th></th>
         </tr>
     </thead>
@@ -41,14 +49,18 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Answer)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CardSet!.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.CardId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.CardId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.CardId">Delete</a>
-                </td>
+                @if (loggedIn) {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CardSet!.Name)
+                    </td>
+                
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.CardId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.CardId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.CardId">Delete</a>
+                    </td>
+                }
+                
             </tr>
         }
     </tbody>

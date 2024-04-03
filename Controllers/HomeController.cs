@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using ProjectStudyTool.Converter;
 using ProjectStudyTool.Models;
@@ -49,11 +50,32 @@ public class HomeController : Controller
             Console.WriteLine("Empty user content");
             return View();
         }
-        Console.WriteLine(userContent);
+        // Console.WriteLine(userContent);
         var openAiService = new OpenAiService();
         var response = await openAiService.UseOpenAiService(userContent);
-        ViewBag.ResponseContent = response[^1].Content;       
-        return View();
+        ViewBag.ResponseContent = response[^1].Content;
+
+        // if response content is empty, return to Home page
+        if (response[^1].Content == null)
+        {
+            Console.WriteLine("Empty response content");
+            return View();
+        }
+
+        // if current user is guest user, create temporary cards and store them in TempData
+        if (User.Identity!.Name == null)
+        {
+            var allTemporaryCards = _cardService.CreateCardsFromTextForNonLoggedInUser(response[^1].Content!);
+            TempData["AllTemporaryCardsJSON"] = JsonSerializer.Serialize(allTemporaryCards);
+            return RedirectToAction("Index", "Card");
+        }
+
+        // if current user is logged in, create card set and store it in database
+        // Console.WriteLine("User is logged in");
+        // var cardSet = _cardService.CreateCardSetFromText(response[^1].Content!, "Default Card Set", 1);
+
+        // go to Index page of CardSet
+        return RedirectToAction("Index", "Card");    
     }
 
     // Validate user's study contents

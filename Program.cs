@@ -6,12 +6,6 @@ using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ***** Connect to OpenAI API *****
-string _endpoint = System.Configuration.ConfigurationManager.AppSettings["endpoint"]!;
-string _apikey = System.Configuration.ConfigurationManager.AppSettings["api-key"]!;
-string _deploymentname = System.Configuration.ConfigurationManager.AppSettings["deployment-name"]!;
-
-
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

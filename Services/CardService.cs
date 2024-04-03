@@ -263,4 +263,17 @@ public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
         }
     }
 
+    // Create cards from text for non-logged in users
+    public List<Card> CreateCardsFromTextForNonLoggedInUser(string text) {
+        var cardList = new List<Card>();
+        var cards = TextConverter.convertTextToCardArray(text);
+        var cardNumber = 1;
+        foreach (var card in cards)
+        {
+            card.QuestionId = cardNumber++;
+            cardList.Add(card);
+        }
+        return cardList;
+    }
+
 }
