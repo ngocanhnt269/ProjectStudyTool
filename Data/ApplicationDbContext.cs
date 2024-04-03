@@ -20,18 +20,18 @@ public class ApplicationDbContext : IdentityDbContext
         base.OnModelCreating(modelBuilder);
 
         // User
-        modelBuilder.Entity<User>().Property(u => u.UserId).IsRequired();
-        modelBuilder.Entity<User>().ToTable("User");
+        // modelBuilder.Entity<User>().Property(u => u.UserId).IsRequired();
+        // modelBuilder.Entity<User>().ToTable("User");
 
         modelBuilder.Entity<Card>().Property(c => c.CardId).IsRequired();
         modelBuilder.Entity<Card>()
-        .ToTable("Cards"); 
+        .ToTable("Card"); 
 
         modelBuilder.Entity<CardSet>().Property(cs => cs.CardSetId).IsRequired();
         modelBuilder.Entity<CardSet>()
-        .ToTable("CardSets"); 
+        .ToTable("CardSet"); 
 
-        modelBuilder.Seed();
+        // modelBuilder.Seed();
     }
 
     public DbSet<ProjectStudyTool.Models.Card> Card { get; set; } = default!;
