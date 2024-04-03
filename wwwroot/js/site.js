@@ -5,6 +5,12 @@
 var currentCardIndex = 0;
 var flashcards = document.querySelectorAll(".flashcard");
 
+document.addEventListener("keydown", function (event) {
+  if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+    toggleFlashcard();
+  }
+});
+
 function toggleFlashcard() {
   var currentFlashcard = flashcards[currentCardIndex];
   var question = currentFlashcard.querySelector(".question");
@@ -18,6 +24,8 @@ function toggleFlashcard() {
     answer.style.display = "block";
   }
 }
+
+var currentCardIndex = 0;
 
 function nextFlashcard() {
   console.log("Next flashcard called");
@@ -36,3 +44,4 @@ function previousFlashcard() {
     toggleFlashcard();
   }
 }
+toggleFlashcard();
