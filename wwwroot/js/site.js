@@ -1,47 +1,50 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿var currentCardIndex = 0;
+var flashcards = window.flashcards;
 
-// Write your JavaScript code.
-var currentCardIndex = 0;
-var flashcards = document.querySelectorAll(".flashcard");
+function displayFlashcard(index) {
+  var flashcard = flashcards[index];
+  var questionElement = document.querySelector("#flashcard .question");
+  var answerElement = document.querySelector("#flashcard .answer");
 
-document.addEventListener("keydown", function (event) {
-  if (event.key === "ArrowUp" || event.key === "ArrowDown") {
-    toggleFlashcard();
-  }
-});
+  questionElement.textContent = flashcard.question;
+  answerElement.textContent = flashcard.answer;
 
-function toggleFlashcard() {
-  var currentFlashcard = flashcards[currentCardIndex];
-  var question = currentFlashcard.querySelector(".question");
-  var answer = currentFlashcard.querySelector(".answer");
-
-  if (question.style.display === "none") {
-    question.style.display = "block";
-    answer.style.display = "none";
-  } else {
-    question.style.display = "none";
-    answer.style.display = "block";
-  }
+  // Initially show the question and hide the answer
+  questionElement.style.display = "block";
+  answerElement.style.display = "none";
 }
 
-var currentCardIndex = 0;
+function toggleFlashcard() {
+  var questionElement = document.querySelector("#flashcard .question");
+  var answerElement = document.querySelector("#flashcard .answer");
+
+  // If the answer is hidden, show it and hide the question
+  if (answerElement.style.display === "none") {
+    answerElement.style.display = "block";
+    questionElement.style.display = "none";
+  }
+  // If the answer is shown, hide it and show the question
+  else {
+    answerElement.style.display = "none";
+    questionElement.style.display = "block";
+  }
+}
 
 function nextFlashcard() {
   console.log("Next flashcard called");
   if (currentCardIndex < flashcards.length - 1) {
-    toggleFlashcard();
     currentCardIndex++;
-    toggleFlashcard();
+    displayFlashcard(currentCardIndex);
   }
 }
 
 function previousFlashcard() {
   console.log("Previous flashcard called");
   if (currentCardIndex > 0) {
-    toggleFlashcard();
     currentCardIndex--;
-    toggleFlashcard();
+    displayFlashcard(currentCardIndex);
   }
 }
-toggleFlashcard();
+
+// Display the first flashcard initially
+displayFlashcard(currentCardIndex);
