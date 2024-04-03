@@ -67,5 +67,6 @@
 </div>
 <script>
     // This will create a global JavaScript variable
-    window.flashcards = @Html.Raw(Json.Serialize(ViewData["Cards"]));
+    window.flashcards = @Html.Raw(Json.Serialize(Model));
 </script>
+<script src="~/js/site.js"></script>
