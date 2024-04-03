@@ -1,5 +1,5 @@
 @model IEnumerable<ProjectStudyTool.Models.Card>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 @{
     ViewData["Title"] = "Index";
 }
@@ -9,6 +9,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -28,26 +29,43 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuestionId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Question)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Answer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CardSet.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CardId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CardId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CardId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuestionId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Question)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Answer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CardSet!.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CardId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.CardId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.CardId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<div id="flashcard-container">
+    <div id="flashcard" class="flashcard" onclick="toggleFlashcard()">
+        <div class="question">@Html.DisplayFor(model => model.FirstOrDefault()!.Question)</div>
+        <div class="answer" style="display: none;">@Html.DisplayFor(model => model.FirstOrDefault()!.Answer)</div>
+    </div>
+</div>
+
+<div id="navigation-arrows">
+    <button onclick="previousFlashcard()"><i class="fas fa-arrow-left"></i></button>
+    <button onclick="nextFlashcard()"><i class="fas fa-arrow-right"></i></button>
+</div>
+<script>
+    // This will create a global JavaScript variable
+    window.flashcards = @Html.Raw(Json.Serialize(ViewData["Cards"]));
+</script>
