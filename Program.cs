@@ -20,6 +20,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+
 // For crud operations
 builder.Services.AddScoped<CardService>();
 
