@@ -107,12 +107,14 @@ public CardSet? CreateCardSetFromText(string text, string name, string userId)
     };
 
     // Add the card set to the database
-    CreateCardSet(cardSet);
+    PersistCardSet(cardSet);
+    var cardNumber = 1;
 
     // Assign the CardSetId to each card and add them to the card set
     foreach (var card in cards)
     {
         card.CardSetId = cardSet.CardSetId;
+        card.QuestionId = cardNumber++;
         cardSet.Cards.Add(card);  // Add card to the card set's collection
     }
 
@@ -225,8 +227,8 @@ public CardSet? CreateCardSetFromText(string text, string name, string userId)
         return _context.CardSets!.Include(cs => cs.Cards).OrderByDescending(cs => cs.CardSetId).FirstOrDefault();
     }
 
-    // Create a new card set
-    public CardSet CreateCardSet(CardSet cardSet)
+    // Persist a new card set to the database
+    public CardSet PersistCardSet(CardSet cardSet)
     {
         _context.CardSets!.Add(cardSet);
         _context.SaveChanges();

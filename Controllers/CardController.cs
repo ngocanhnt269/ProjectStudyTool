@@ -1,14 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ProjectStudyTool.Data;
-using ProjectStudyTool.Models;
 
 namespace ProjectStudyTool.Controllers;
 
@@ -21,112 +12,29 @@ public class CardController : Controller
         _context = context;
     }
 
+
     // GET: Card
-    // public async Task<IActionResult> Index()
-    // {
-    //     // var applicationDbContext = _context.Card.Include(c => c.CardSet);
-    //     // return View(await applicationDbContext.ToListAsync());
-    //     var fakeCard1 = new Card
-    //     {
-    //         CardId = 1,
-    //         CardSetId = 1, // Assuming CardSetId exists in your database
-    //         QuestionId = 1,
-    //         Question = "What is the capital of France?",
-    //         Answer = "Paris",
-    //         CardSet = new CardSet { CardSetId = 1, Name = "Geography" } // Assuming CardSet is related to Card
-    //     };
-    //     var fakeCard2 = new Card
-    //     {
-    //         CardId = 2,
-    //         CardSetId = 1, // Assuming CardSetId exists in your database
-    //         QuestionId = 2,
-    //         Question = "What is the capital of Spain?",
-    //         Answer = "Madrid",
-    //         CardSet = new CardSet { CardSetId = 2, Name = "Geography" } // Assuming CardSet is related to Card
-    //     };
-
-    //     var fakeCard3 = new Card
-    //     {
-    //         CardId = 3,
-    //         CardSetId = 2, // Assuming CardSetId exists in your database
-    //         QuestionId = 3,
-    //         Question = "What is the capital of Italy?",
-    //         Answer = "Rome",
-    //         CardSet = new CardSet { CardSetId = 3, Name = "Geography" } // Assuming CardSet is related to Card
-    //     };
-
-    //     // Add the fake card to a list
-    //     var fakeCardList = new List<Card> { fakeCard1, fakeCard2, fakeCard3 };
-
-    //     // Combine the fake card list with real database data
-    //     var cardList = await _context.Card.Include(c => c.CardSet).ToListAsync();
-    //     cardList.AddRange(fakeCardList);
-    //     ViewData["Cards"] = cardList;
-    //     return View(cardList);
-    // }
-
-
-        // GET: Card
-        public IActionResult Index()
-
+    public IActionResult Index()
+    {
+        var cardList = new List<Card>();
+        // If user is not logged in, display temporary cards
+        if (!User.Identity!.IsAuthenticated)
         {
-            // var applicationDbContext = _context.Card.Include(c => c.CardSet);
-            // return View(await applicationDbContext.ToListAsync());
-
-            /***************** TODO: delete when finishing displaying cards *********************/
-            // var fakeCard1 = new Card
-            // {
-            //     CardId = 1,
-            //     CardSetId = 1, // Assuming CardSetId exists in your database
-            //     QuestionId = 1,
-            //     Question = "What is the capital of France?",
-            //     Answer = "Paris",
-            //     CardSet = new CardSet { CardSetId = 1, Name = "Geography" } // Assuming CardSet is related to Card
-            // };
-            // var fakeCard2 = new Card
-            // {
-            //     CardId = 2,
-            //     CardSetId = 1, // Assuming CardSetId exists in your database
-            //     QuestionId = 2,
-            //     Question = "What is the capital of Spain?",
-            //     Answer = "Madrid",
-            //     CardSet = new CardSet { CardSetId = 2, Name = "Geography" } // Assuming CardSet is related to Card
-            // };
-
-            // var fakeCard3 = new Card
-            // {
-            //     CardId = 3,
-            //     CardSetId = 2, // Assuming CardSetId exists in your database
-            //     QuestionId = 3,
-            //     Question = "What is the capital of Italy?",
-            //     Answer = "Rome",
-            //     CardSet = new CardSet { CardSetId = 3, Name = "Geography" } // Assuming CardSet is related to Card
-            // };
-
-            // // Add the fake card to a list
-            // var fakeCardList = new List<Card> { fakeCard1, fakeCard2, fakeCard3 };
-
-            // // Combine the fake card list with real database data
-            // var cardList = await _context.Card.Include(c => c.CardSet).ToListAsync();
-            // cardList.AddRange(fakeCardList);
-            // ViewData["Cards"] = cardList;
-
             var cardListJson = TempData["AllTemporaryCardsJSON"];
-            var cardList = JsonSerializer.Deserialize<List<Card>>(cardListJson!.ToString()!);
-
-            return View(cardList);
+            cardList = JsonSerializer.Deserialize<List<Card>>(cardListJson!.ToString()!);
         }
-
-    //     var card = await _context.Card
-    //         .Include(c => c.CardSet)
-    //         .FirstOrDefaultAsync(m => m.CardId == id);
-    //     if (card == null)
-    //     {
-    //         return NotFound();
-    //     }
-
-    //     return View(card);
-    // }
+        // If user is logged in, display user's all cards
+        else
+        {
+            var currentUserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id;
+            cardList = _context.Card.ToList();
+            if (cardList.Count == 0)
+            {
+                Console.WriteLine("No cards found for user");
+            }
+        }
+        return View(cardList);
+    }
 
     // GET: Card/Create
     public IActionResult Create()
@@ -243,4 +151,5 @@ public class CardController : Controller
     {
         return _context.Card.Any(e => e.CardId == id);
     }
+
 }
