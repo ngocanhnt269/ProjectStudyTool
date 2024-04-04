@@ -66,7 +66,7 @@ public class HomeController : Controller
         }
 
         // if current user is guest user, create temporary cards and store them in TempData
-        if (User.Identity!.Name == null)
+        if (!User.Identity!.IsAuthenticated)
         {
             var allTemporaryCards = _cardService.CreateCardsFromTextForNonLoggedInUser(response[^1].Content!);
             TempData["AllTemporaryCardsJSON"] = JsonSerializer.Serialize(allTemporaryCards);

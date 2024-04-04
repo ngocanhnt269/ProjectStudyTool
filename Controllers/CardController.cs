@@ -22,6 +22,11 @@ public class CardController : Controller
         // If user is not logged in, display temporary cards
         if (!User.Identity!.IsAuthenticated)
         {
+            if (TempData["AllTemporaryCardsJSON"] == null)
+            {
+                Console.WriteLine("No temporary cards found");
+                return RedirectToAction("Index", "Home");
+            }
             var cardListJson = TempData["AllTemporaryCardsJSON"];
             cardList = JsonSerializer.Deserialize<List<Card>>(cardListJson!.ToString()!);
         }
@@ -156,9 +161,17 @@ public class CardController : Controller
 
     // GET: Card/Set/5
     // Display all cards in a card set
+    [HttpGet("Card/Set/{id}")]
     public IActionResult Set()
     {
         var cardSetId = Convert.ToInt32(RouteData.Values["id"]);
+
+        // Check if the current user is the owner of the card set
+        if (!IsOwnerOfCardSet(cardSetId))
+        {
+            Console.WriteLine("User is not the owner of the card set");
+            return RedirectToAction("Index", "CardSet");
+        }
 
         var cardList = new List<Card>();
         try
@@ -171,12 +184,27 @@ public class CardController : Controller
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("Error in getting cards by cardSetId = " + cardSetId + ": " + e.Message);
             return NotFound();
         }
-
-
+        
         return View(cardList);
+    }
+
+    // Check if the current user is the owner of the card set
+    public bool IsOwnerOfCardSet(int cardSetId)
+    {
+        var currentUserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name)?.Id;
+        var cardSet = _context.CardSet.FirstOrDefault(c => c.CardSetId == cardSetId);
+        if (cardSet == null)
+        {
+            return false;
+        }
+        if (cardSet.UserId == currentUserId)
+        {
+            return true;
+        }
+        return false;
     }
 
 }
