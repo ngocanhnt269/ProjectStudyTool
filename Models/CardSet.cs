@@ -5,7 +5,8 @@ public class CardSet
     [Display(Name = "Card Set ID")]
     public int CardSetId { get; set; }
 
-   
+    [Required]
+    [ForeignKey("UserId")]
     public string? UserId { get; set; }
 
     [Required(ErrorMessage = "Name is required")]
@@ -25,7 +26,6 @@ public class CardSet
     [Display(Name = "PDF File")]
     public string? PdfFileUrl { get; set; }
 
-    // Navigation property for the user who owns this card set
-    [ForeignKey("UserId")]
+    // Navigation property for the user who owns this card set 
     public User? User { get; set; }
 }

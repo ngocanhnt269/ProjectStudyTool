@@ -6,10 +6,12 @@ namespace ProjectStudyTool.Controllers;
 public class CardController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly CardService _cardService;
 
-    public CardController(ApplicationDbContext context)
+    public CardController(ApplicationDbContext context, CardService cardService)
     {
         _context = context;
+        _cardService = cardService;
     }
 
 
@@ -150,6 +152,31 @@ public class CardController : Controller
     private bool CardExists(int id)
     {
         return _context.Card.Any(e => e.CardId == id);
+    }
+
+    // GET: Card/Set/5
+    // Display all cards in a card set
+    public IActionResult Set()
+    {
+        var cardSetId = Convert.ToInt32(RouteData.Values["id"]);
+
+        var cardList = new List<Card>();
+        try
+        {
+            cardList = _cardService.GetCardsByCardSetId(cardSetId);
+            if (cardList.Count == 0)
+            {
+                Console.WriteLine("No cards found for card set");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            return NotFound();
+        }
+
+
+        return View(cardList);
     }
 
 }

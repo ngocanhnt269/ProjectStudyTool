@@ -18,11 +18,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.Stores.MaxLengthForKeys = 128; // increase key for encrypting password
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
-
 
 // For crud operations
 builder.Services.AddScoped<CardService>();
+
+builder.Services.AddControllersWithViews();
+
+
 
 // For razor/blazor components
 builder.Services

@@ -74,17 +74,21 @@ public class HomeController : Controller
         }
 
         // if current user is logged in, create card set and store it in database
-        Console.WriteLine("User is logged in");
         var currentUserId = _userManager.GetUserId(User);
+        if (currentUserId == null || _userManager.FindByIdAsync(currentUserId) == null)
+        {
+            Console.WriteLine("Current user ID is null");
+            return View();
+        }
         var cardSet = _cardService.CreateCardSetFromText(response[^1].Content!, "My Study Set", currentUserId!);
-        var cardSetId = cardSet!.CardSetId;
+        
         if (cardSet == null)
         {
             Console.WriteLine("CardSet is null");
             return View();
         }
-        // go to Index page of CardSet
-        // return RedirectToAction("Edit/"+cardSetId, "CardSet");    
+
+        var cardSetId = cardSet!.CardSetId;   
         
         // go to Edit page of CardSet that was just created
         return RedirectToAction("Edit", "CardSet", new { id = cardSetId });
