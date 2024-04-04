@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+
 using ProjectStudyTool.Converter;
 using ProjectStudyTool.Models;
-using ProjectStudyTool.Services;
+
 using Radzen.Blazor.Rendering;
 
 namespace ProjectStudyTool.Controllers;
@@ -14,10 +15,12 @@ public class HomeController : Controller
 
     // TODO: remove this later
     private readonly CardService _cardService;
-    public HomeController(ILogger<HomeController> logger, CardService cardService)
+    private readonly UserManager<IdentityUser> _userManager;
+    public HomeController(ILogger<HomeController> logger, CardService cardService, UserManager<IdentityUser> userManager)
     {
         _logger = logger;
         _cardService = cardService;
+        _userManager = userManager;
     }
 
     public IActionResult Index()
@@ -71,8 +74,9 @@ public class HomeController : Controller
         }
 
         // if current user is logged in, create card set and store it in database
-        // Console.WriteLine("User is logged in");
-        // var cardSet = _cardService.CreateCardSetFromText(response[^1].Content!, "Default Card Set", 1);
+        Console.WriteLine("User is logged in");
+        var currentUserId = _userManager.GetUserId(User);
+        var cardSet = _cardService.CreateCardSetFromText(response[^1].Content!, "Default Card Set", currentUserId!);
 
         // go to Index page of CardSet
         return RedirectToAction("Index", "Card");    
@@ -125,14 +129,14 @@ public class HomeController : Controller
         TestCardService testCardService = new TestCardService(_cardService);
         string testString = testCardService.getTestString();
 
-        testCardService.testCreateCardSetFromText(testString, "Linux 1", 1);
+        testCardService.testCreateCardSetFromText(testString, "Linux 1", "1");
         testCardService.testGetAllCards();
 
         return View("Test");
     }
 
     [HttpPost]
-    public IActionResult CreateCardSetFromText(string text, string name = "linux 1", int userId = 1)
+    public IActionResult CreateCardSetFromText(string text, string name, string userId)
     {
         // Create a new card set from text
         var createdCardSet = _cardService.CreateCardSetFromText(text, name, userId);
@@ -168,7 +172,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GetCardSetsByUserId(int userId1)
+    public IActionResult GetCardSetsByUserId(string userId1)
     {
         var cardSets = _cardService.GetCardSetsByUserId(userId1);
         foreach (var cardSet in cardSets)

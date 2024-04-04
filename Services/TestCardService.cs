@@ -49,7 +49,7 @@ public class TestCardService
         }
         Console.WriteLine("-- Ending Test --");
     }
-    public void testCreateCardSetFromText(string text, string name = "Linux 1", int userId = 1) {
+    public void testCreateCardSetFromText(string text, string name = "Linux 1", string userId = "1") {
 
         Console.WriteLine("-- Starting Test --");
         _cardService?.CreateCardSetFromText(text, name, userId );

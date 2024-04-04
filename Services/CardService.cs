@@ -85,7 +85,7 @@ public class CardService
     //     }
     //     return cardSet;
     // }
-public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
+public CardSet? CreateCardSetFromText(string text, string name, string userId)
 {
     // Convert the text to an array of cards
     var cards = TextConverter.convertTextToCardArray(text);
@@ -203,7 +203,7 @@ public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
         CardSet
     */
     // Get all card sets for a user
-    public List<CardSet> GetCardSetsByUserId(int userId)
+    public List<CardSet> GetCardSetsByUserId(string userId)
     {
         return _context.CardSets!.Include(cs => cs.Cards).Where(cs => cs.UserId == userId).ToList();
     }

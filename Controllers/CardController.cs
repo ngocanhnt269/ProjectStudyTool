@@ -21,7 +21,7 @@ namespace ProjectStudyTool.Controllers
         }
 
         // GET: Card
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             // var applicationDbContext = _context.Card.Include(c => c.CardSet);
             // return View(await applicationDbContext.ToListAsync());
