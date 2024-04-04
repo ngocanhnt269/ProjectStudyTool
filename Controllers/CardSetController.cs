@@ -21,10 +21,11 @@ public class CardSetController : Controller
     }
 
     // GET: CardSet
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var applicationDbContext = _context.CardSet.Include(c => c.User);
-        return View(await applicationDbContext.ToListAsync());
+        var userId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name)?.Id;
+        var cardSetList = _context.CardSet.Where(c => c.UserId == userId).ToList();//only show card sets that belong to the user
+        return View(cardSetList);
     }
 
     // GET: CardSet/Details/5

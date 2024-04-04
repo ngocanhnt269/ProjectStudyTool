@@ -27,7 +27,7 @@ public class CardController : Controller
         else
         {
             var currentUserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id;
-            cardList = _context.Card.ToList();
+            cardList = _context.Card.Where(c => c.CardSet!.UserId == currentUserId).ToList(); //only show cards that belong to the user
             if (cardList.Count == 0)
             {
                 Console.WriteLine("No cards found for user");
