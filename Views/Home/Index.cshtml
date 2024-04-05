@@ -3,11 +3,6 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
-
-    @* TODO: Fix the formatting of the response *@
     <div>
         <p>@ViewBag.ResponseContent</p>
     </div>
@@ -16,11 +11,11 @@
 <form method="post">
     <component type="typeof(ProjectStudyTool.Components.Home.PromptForm)" render-mode="ServerPrerendered" />
     <div class="d-flex gap-2 col-2 mx-auto my-3">
-        
-            <input type="submit" value="Generate" class ="btn btn-success btn-lg"/>
-            <input type="button" value="Clear" class ="btn btn-outline-secondary btn-lg "/>
-        
-        
+
+        <input type="submit" value="Generate" class="btn btn-success btn-lg" />
+        <input type="button" value="Clear" class="btn btn-outline-secondary btn-lg " />
+
+
     </div>
 </form>
 
@@ -28,7 +23,7 @@
 
 <script>
     let content = document.getElementById('userContent');
-      // Clear the textarea
+    // Clear the textarea
     document.querySelector('input[type="button"]').addEventListener('click', function () {
         content.value = '';
         updateCharacterCount();
