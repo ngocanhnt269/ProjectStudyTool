@@ -50,17 +50,28 @@ public class CardSetController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("CardSetId,UserId,Name,CreatedDate,ModifiedDate,PdfFileUrl")] CardSet cardSet)
+    public async Task<IActionResult> Create([Bind("UserId,Name")] CardSet cardSet)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(cardSet);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                cardSet.CreatedDate = DateTime.Now;
+                _context.Add(cardSet);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                Console.WriteLine(ex.Message);
+                ModelState.AddModelError("", "An error occurred while saving the cardset.");
+                return View(cardSet); // Redisplay the form with an error message
+            }
         }
-        ViewData["UserId"] = new SelectList(_context.User, "UserId", "Password", cardSet.UserId);
-        return View(cardSet);
+        return View(cardSet); // Redisplay the form with validation errors
     }
+
 
     // GET: CardSet/Edit/5
     public async Task<IActionResult> Edit(int? id)
