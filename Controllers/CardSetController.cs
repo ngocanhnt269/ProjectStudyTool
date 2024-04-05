@@ -50,8 +50,9 @@ public class CardSetController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("UserId,Name")] CardSet cardSet)
+    public async Task<IActionResult> Create(CardSet cardSet)
     {
+        cardSet.UserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name)?.Id;
         if (ModelState.IsValid)
         {
             try
@@ -146,7 +147,7 @@ public class CardSetController : Controller
     }
 
     // POST: CardSet/Delete/5
-    [HttpPost, ActionName("Delete")]
+    [HttpPost, ActionName("DeleteConfirmed")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
@@ -159,7 +160,7 @@ public class CardSetController : Controller
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
-
+    
     private bool CardSetExists(int id)
     {
         return _context.CardSet.Any(e => e.CardSetId == id);

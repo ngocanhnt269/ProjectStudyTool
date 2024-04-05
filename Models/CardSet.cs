@@ -5,7 +5,7 @@ public class CardSet
     [Display(Name = "Card Set ID")]
     public int CardSetId { get; set; }
 
-    [Required]
+    // [Required]
     [ForeignKey("UserId")]
     public string? UserId { get; set; }
 
