@@ -4,10 +4,8 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create CardSet</a>
 </p>
 <table class="table">
     <thead>
@@ -25,6 +23,7 @@
                 <td>
                     <a asp-action="Set" asp-controller="Card" asp-route-id="@item.CardSetId">@Html.DisplayFor(modelItem =>
                     item.Name)</a>
+
                 </td>
 
                 <td>
