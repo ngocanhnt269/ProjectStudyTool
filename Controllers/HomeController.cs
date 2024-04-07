@@ -1,8 +1,10 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
+
 using ProjectStudyTool.Converter;
 using ProjectStudyTool.Models;
-using ProjectStudyTool.Services;
+
 using Radzen.Blazor.Rendering;
 
 namespace ProjectStudyTool.Controllers;
@@ -13,10 +15,12 @@ public class HomeController : Controller
 
     // TODO: remove this later
     private readonly CardService _cardService;
-    public HomeController(ILogger<HomeController> logger, CardService cardService)
+    private readonly UserManager<IdentityUser> _userManager;
+    public HomeController(ILogger<HomeController> logger, CardService cardService, UserManager<IdentityUser> userManager)
     {
         _logger = logger;
         _cardService = cardService;
+        _userManager = userManager;
     }
 
     public IActionResult Index()
@@ -49,11 +53,45 @@ public class HomeController : Controller
             Console.WriteLine("Empty user content");
             return View();
         }
-        Console.WriteLine(userContent);
+        // Console.WriteLine(userContent);
         var openAiService = new OpenAiService();
         var response = await openAiService.UseOpenAiService(userContent);
-        ViewBag.ResponseContent = response[^1].Content;       
-        return View();
+        ViewBag.ResponseContent = response[^1].Content;
+
+        // if response content is empty, return to Home page
+        if (response[^1].Content == null)
+        {
+            Console.WriteLine("Empty response content");
+            return View();
+        }
+
+        // if current user is guest user, create temporary cards and store them in TempData
+        if (!User.Identity!.IsAuthenticated)
+        {
+            var allTemporaryCards = _cardService.CreateCardsFromTextForNonLoggedInUser(response[^1].Content!);
+            TempData["AllTemporaryCardsJSON"] = JsonSerializer.Serialize(allTemporaryCards);
+            return RedirectToAction("Index", "Card");
+        }
+
+        // if current user is logged in, create card set and store it in database
+        var currentUserId = _userManager.GetUserId(User);
+        if (currentUserId == null || _userManager.FindByIdAsync(currentUserId) == null)
+        {
+            Console.WriteLine("Current user ID is null");
+            return View();
+        }
+        var cardSet = _cardService.CreateCardSetFromText(response[^1].Content!, "My Study Set", currentUserId!);
+        
+        if (cardSet == null)
+        {
+            Console.WriteLine("CardSet is null");
+            return View();
+        }
+
+        var cardSetId = cardSet!.CardSetId;   
+        
+        // go to Edit page of CardSet that was just created
+        return RedirectToAction("Edit", "CardSet", new { id = cardSetId });
     }
 
     // Validate user's study contents
@@ -103,14 +141,14 @@ public class HomeController : Controller
         TestCardService testCardService = new TestCardService(_cardService);
         string testString = testCardService.getTestString();
 
-        testCardService.testCreateCardSetFromText(testString, "Linux 1", 1);
+        testCardService.testCreateCardSetFromText(testString, "Linux 1", "1");
         testCardService.testGetAllCards();
 
         return View("Test");
     }
 
     [HttpPost]
-    public IActionResult CreateCardSetFromText(string text, string name = "linux 1", int userId = 1)
+    public IActionResult CreateCardSetFromText(string text, string name, string userId)
     {
         // Create a new card set from text
         var createdCardSet = _cardService.CreateCardSetFromText(text, name, userId);
@@ -146,7 +184,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult GetCardSetsByUserId(int userId1)
+    public IActionResult GetCardSetsByUserId(string userId1)
     {
         var cardSets = _cardService.GetCardSetsByUserId(userId1);
         foreach (var cardSet in cardSets)

@@ -2,9 +2,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 @{
     var loggedIn = User.Identity!.IsAuthenticated;
-    ViewData["Title"] = "Index";
 }
 
+<h1>@ViewBag.CardSetName</h1>
 
 @if (loggedIn)
 {
@@ -24,6 +24,7 @@
     <button onclick="previousFlashcard()"><i class="fas fa-arrow-left"></i></button>
     <button onclick="nextFlashcard()"><i class="fas fa-arrow-right"></i></button>
 </div>
+
 
 <table class="table">
     <thead>
@@ -69,7 +70,6 @@
 
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.CardId">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.CardId">Details</a> |
                         <a asp-action="Delete" asp-route-id="@item.CardId">Delete</a>
                     </td>
                 }
@@ -81,6 +81,6 @@
 
 <script>
     // This will create a global JavaScript variable
-    window.flashcards = @Html.Raw(Json.Serialize(Model));
+    @* window.flashcards = @Html.Raw(Json.Serialize(Model)); *@
 </script>
 <script src="~/js/site.js"></script>

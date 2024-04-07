@@ -85,7 +85,7 @@ public class CardService
     //     }
     //     return cardSet;
     // }
-public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
+public CardSet? CreateCardSetFromText(string text, string name, string userId)
 {
     // Convert the text to an array of cards
     var cards = TextConverter.convertTextToCardArray(text);
@@ -107,12 +107,14 @@ public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
     };
 
     // Add the card set to the database
-    CreateCardSet(cardSet);
+    PersistCardSet(cardSet);
+    var cardNumber = 1;
 
     // Assign the CardSetId to each card and add them to the card set
     foreach (var card in cards)
     {
         card.CardSetId = cardSet.CardSetId;
+        card.QuestionId = cardNumber++;
         cardSet.Cards.Add(card);  // Add card to the card set's collection
     }
 
@@ -203,7 +205,7 @@ public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
         CardSet
     */
     // Get all card sets for a user
-    public List<CardSet> GetCardSetsByUserId(int userId)
+    public List<CardSet> GetCardSetsByUserId(string userId)
     {
         return _context.CardSets!.Include(cs => cs.Cards).Where(cs => cs.UserId == userId).ToList();
     }
@@ -225,8 +227,8 @@ public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
         return _context.CardSets!.Include(cs => cs.Cards).OrderByDescending(cs => cs.CardSetId).FirstOrDefault();
     }
 
-    // Create a new card set
-    public CardSet CreateCardSet(CardSet cardSet)
+    // Persist a new card set to the database
+    public CardSet PersistCardSet(CardSet cardSet)
     {
         _context.CardSets!.Add(cardSet);
         _context.SaveChanges();
@@ -261,6 +263,19 @@ public CardSet? CreateCardSetFromText(string text, string name, int userId = 1)
             _context.CardSets!.Remove(cardSet);
             _context.SaveChanges();
         }
+    }
+
+    // Create cards from text for non-logged in users
+    public List<Card> CreateCardsFromTextForNonLoggedInUser(string text) {
+        var cardList = new List<Card>();
+        var cards = TextConverter.convertTextToCardArray(text);
+        var cardNumber = 1;
+        foreach (var card in cards)
+        {
+            card.QuestionId = cardNumber++;
+            cardList.Add(card);
+        }
+        return cardList;
     }
 
 }

@@ -1,13 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ProjectStudyTool.Data;
-using ProjectStudyTool.Models;
 
 namespace ProjectStudyTool.Controllers;
 
@@ -21,10 +12,11 @@ public class CardSetController : Controller
     }
 
     // GET: CardSet
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var applicationDbContext = _context.CardSet.Include(c => c.User);
-        return View(await applicationDbContext.ToListAsync());
+        var userId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name)?.Id;
+        var cardSetList = _context.CardSet.Where(c => c.UserId == userId).ToList();//only show card sets that belong to the user
+        return View(cardSetList);
     }
 
     // GET: CardSet/Details/5
@@ -58,17 +50,29 @@ public class CardSetController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("CardSetId,UserId,Name,CreatedDate,ModifiedDate,PdfFileUrl")] CardSet cardSet)
+    public async Task<IActionResult> Create(CardSet cardSet)
     {
+        cardSet.UserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name)?.Id;
         if (ModelState.IsValid)
         {
-            _context.Add(cardSet);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                cardSet.CreatedDate = DateTime.Now;
+                _context.Add(cardSet);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging purposes
+                Console.WriteLine(ex.Message);
+                ModelState.AddModelError("", "An error occurred while saving the cardset.");
+                return View(cardSet); // Redisplay the form with an error message
+            }
         }
-        ViewData["UserId"] = new SelectList(_context.User, "UserId", "Password", cardSet.UserId);
-        return View(cardSet);
+        return View(cardSet); // Redisplay the form with validation errors
     }
+
 
     // GET: CardSet/Edit/5
     public async Task<IActionResult> Edit(int? id)
@@ -143,7 +147,7 @@ public class CardSetController : Controller
     }
 
     // POST: CardSet/Delete/5
-    [HttpPost, ActionName("Delete")]
+    [HttpPost, ActionName("DeleteConfirmed")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
@@ -156,7 +160,7 @@ public class CardSetController : Controller
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
-
+    
     private bool CardSetExists(int id)
     {
         return _context.CardSet.Any(e => e.CardSetId == id);

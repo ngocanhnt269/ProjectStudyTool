@@ -12,7 +12,7 @@ public class Card
     [Display(Name = "Card ID")]
     public int CardId { get; set; }
 
-    [ForeignKey("CardSet")]
+    [Required]
     [Display(Name = "Card Set ID")]
     public int CardSetId { get; set; }
 
@@ -31,5 +31,6 @@ public class Card
     public ICollection<PossibleAnswer>? PossibleAnswers { get; set; }
 
     // Navigation property for the card set this card belongs to
+    [ForeignKey("CardSetId")]
     public CardSet? CardSet { get; set; }
 }

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace ProjectStudyTool.Models;
 public class CardSet
 {
@@ -11,8 +5,9 @@ public class CardSet
     [Display(Name = "Card Set ID")]
     public int CardSetId { get; set; }
 
-    [ForeignKey("User")]
-    public int UserId { get; set; }
+    // [Required]
+    [ForeignKey("UserId")]
+    public string? UserId { get; set; }
 
     [Required(ErrorMessage = "Name is required")]
     [Display(Name = "Name")]
@@ -31,6 +26,6 @@ public class CardSet
     [Display(Name = "PDF File")]
     public string? PdfFileUrl { get; set; }
 
-    // Navigation property for the user who owns this card set
+    // Navigation property for the user who owns this card set 
     public User? User { get; set; }
 }

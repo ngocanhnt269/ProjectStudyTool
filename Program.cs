@@ -6,12 +6,6 @@ using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ***** Connect to OpenAI API *****
-string _endpoint = System.Configuration.ConfigurationManager.AppSettings["endpoint"]!;
-string _apikey = System.Configuration.ConfigurationManager.AppSettings["api-key"]!;
-string _deploymentname = System.Configuration.ConfigurationManager.AppSettings["deployment-name"]!;
-
-
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -24,11 +18,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.Stores.MaxLengthForKeys = 128; // increase key for encrypting password
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
-
 
 // For crud operations
 builder.Services.AddScoped<CardService>();
+
+builder.Services.AddControllersWithViews();
+
+
 
 // For razor/blazor components
 builder.Services

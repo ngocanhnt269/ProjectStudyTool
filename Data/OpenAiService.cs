@@ -52,7 +52,7 @@ public class OpenAiService
     chatHistory.AddUserMessage(userContent);
     var response = await chat.GetChatMessageContentsAsync(chatHistory, executionSettings);
     var responseContent = response[^1].Content;
-    Console.WriteLine(responseContent);
+    // Console.WriteLine(responseContent);
 
     return response;
   }
