@@ -172,15 +172,19 @@ public class CardController : Controller
             Console.WriteLine("User is not the owner of the card set");
             return RedirectToAction("Index", "CardSet");
         }
+        // add the card set id to the view data
+        ViewBag.CardSetName = _context.CardSet.FirstOrDefault(c => c.CardSetId == cardSetId)?.Name;
 
-        var cardList = new List<Card>();
+        // get all cards in the card set and return as a list
+        var cardList = new List<CardDto>();
         try
         {
-            cardList = _cardService.GetCardsByCardSetId(cardSetId);
+            cardList = _cardService.GetCardDtosByCardSetId(cardSetId);
             if (cardList.Count == 0)
             {
                 Console.WriteLine("No cards found for card set");
             }
+
         }
         catch (Exception e)
         {

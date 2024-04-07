@@ -1,5 +1,5 @@
 ﻿var currentCardIndex = 0;
-var flashcards = window.flashcards;
+var flashcards = window.flashcards || [];
 
 function displayFlashcard(index) {
   var flashcard = flashcards[index];
@@ -30,20 +30,22 @@ function toggleFlashcard() {
   }
 }
 
-function nextFlashcard() {
+function nextFlashcard(callback) {
   console.log("Next flashcard called");
   if (currentCardIndex < flashcards.length - 1) {
     currentCardIndex++;
     displayFlashcard(currentCardIndex);
   }
+  callback();
 }
 
-function previousFlashcard() {
+function previousFlashcard(callback) {
   console.log("Previous flashcard called");
   if (currentCardIndex > 0) {
     currentCardIndex--;
     displayFlashcard(currentCardIndex);
   }
+  callback();
 }
 
 // Display the first flashcard initially

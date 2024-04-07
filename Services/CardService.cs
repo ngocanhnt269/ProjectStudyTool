@@ -154,12 +154,52 @@ public CardSet? CreateCardSetFromText(string text, string name, string userId)
             CreateCard(card);
         }
     }
+
+    // TODO: testing
+    public List<CardDto> GetCardsByCardSetIdForUser(int cardSetId, string userId)
+    {
+        var cards = _context.Cards!
+            .Include(c => c.CardSet) // Include CardSet navigation property
+            .Where(c => c.CardSetId == cardSetId && c.CardSet.UserId == userId)
+            .Select(c => new CardDto
+            {
+                CardId = c.CardId,
+                Question = c.Question,
+                Answer = c.Answer
+                // Map other properties as needed
+            })
+            .ToList();
+
+            return cards;
+    }
     
     // Get all cards in a card set
     public List<Card> GetCardsByCardSetId(int cardSetId)
     {
         return _context.Cards!.Where(c => c.CardSetId == cardSetId).ToList();
     }
+
+// Get all cards in a card set
+public List<CardDto> GetCardDtosByCardSetId(int cardSetId)
+{
+    var cardSet = _context.Cards!
+        .Include(c => c.CardSet) // Include CardSet navigation property
+        .Where(c => c.CardSetId == cardSetId)
+        .Select(c => new CardDto
+        {
+            CardId = c.CardId,
+            Question = c.Question,
+            Answer = c.Answer
+            // Map other properties as needed
+        })
+        .ToList();
+    if (cardSet != null)
+    {
+        return cardSet;
+    }
+    // Return an empty list if card set is not found
+    return new List<CardDto>();
+}
 
     /**
         Card
