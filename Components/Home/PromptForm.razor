@@ -4,20 +4,20 @@
 
 <div class="rz-px-12 rz-text-align-center">
   <RadzenColumn Size="12">
-    <RadzenFormField Text="Enter study contents here" Variant="@variant" >
+    <RadzenFormField AllowFloatingLabel="false" Text="Enter study contents here" Variant="@variant" >
       <RadzenTextArea @bind-Value="@value" Cols="120" Rows="15" 
         id="userContent" oninput="updateCharacterCount()" Name="userContent" MaxLength=@MAX_LENGTH
         />
     </RadzenFormField>
-  <div class="">
-    <div id="characterCount">@value.Length/@MAX_LENGTH characters</div>
+  <div class="text-muted py-2">
+    <small id="characterCount">@value.Length/@MAX_LENGTH characters</small>
   </div>
   </RadzenColumn>
 </div>
 
 
 @code {
-  Variant variant = Variant.Outlined;
+  Variant variant = Variant.Flat;
   string value = "";
   const int MAX_LENGTH = 2000;
 
