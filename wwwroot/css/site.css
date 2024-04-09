@@ -71,3 +71,11 @@ table {
   font-size: 18px;
   cursor: pointer;
 }
+
+mark {
+  background-color: rgb(183, 227, 255);
+  border-radius: 0.35rem;
+}
+mark.success {
+  background-color: #99fdce;
+}
