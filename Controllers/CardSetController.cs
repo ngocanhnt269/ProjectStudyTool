@@ -23,7 +23,6 @@ public class CardSetController : Controller
     }
 
     // GET: CardSet/DownloadPdf/5
-    // TODO: position the question and answer centered on the page
     public async Task<IActionResult> DownloadPdf(int? id)
     {
         if (id == null)
