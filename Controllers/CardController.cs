@@ -113,7 +113,11 @@ public class CardController : Controller
         {
             return NotFound();
         }
-        ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
+        // only get the card sets of the current user
+        var currentUserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name)?.Id;
+        ViewData["CardSetId"] = new SelectList(_context.CardSet.Where(c => c.UserId == currentUserId), 
+            "CardSetId", "Name", card.CardSetId);
+        
         return View(card);
     }
 
