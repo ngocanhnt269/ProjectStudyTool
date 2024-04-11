@@ -1,10 +1,3 @@
-using System.Diagnostics;
-using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
-
-using ProjectStudyTool.Converter;
-using ProjectStudyTool.Models;
-
 using Radzen.Blazor.Rendering;
 
 namespace ProjectStudyTool.Controllers;
@@ -23,6 +16,8 @@ public class HomeController : Controller
         _userManager = userManager;
     }
 
+    [HttpGet]
+    
     public IActionResult Index()
     {
         return View();
@@ -48,10 +43,11 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> IndexAsync(string userContent)
     {
+        // Console.WriteLine("************User content:\n" + userContent);
         if (!ValidateContent(userContent))
         {
             Console.WriteLine("Empty user content");
-            return View();
+            return Redirect("/Home");
         }
         // Console.WriteLine(userContent);
         var openAiService = new OpenAiService();
@@ -62,7 +58,7 @@ public class HomeController : Controller
         if (response[^1].Content == null)
         {
             Console.WriteLine("Empty response content");
-            return View();
+            return Redirect("/Home");
         }
 
         // if current user is guest user, create temporary cards and store them in TempData
@@ -78,14 +74,14 @@ public class HomeController : Controller
         if (currentUserId == null || _userManager.FindByIdAsync(currentUserId) == null)
         {
             Console.WriteLine("Current user ID is null");
-            return View();
+            return Redirect("/Home");
         }
         var cardSet = _cardService.CreateCardSetFromText(response[^1].Content!, "My Study Set", currentUserId!);
         
         if (cardSet == null)
         {
             Console.WriteLine("CardSet is null");
-            return View();
+            return Redirect("/Home");
         }
 
         var cardSetId = cardSet!.CardSetId;   
@@ -102,6 +98,37 @@ public class HomeController : Controller
             return false;
         }
         return true;
+    }
+
+    [HttpPost]
+    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] // Limit file size to 10MB
+    [Route("Index/FileUpload")]
+    public async Task<IActionResult> IndexGetFileAsync(IFormFile file) {
+        if (file != null && file.Length > 0)
+        {
+            string content = "";
+            if (file.ContentType == "text/plain") {
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                {
+                    content = await reader.ReadToEndAsync();
+                }
+            } else if (file.ContentType == "application/pdf") {
+                using (var ms = new MemoryStream()) {
+                    await file.CopyToAsync(ms);
+                    ms.Position = 0;
+                    using (var pdf = PdfDocument.Open(ms)) {
+                        foreach (var page in pdf.GetPages()) {
+                            content += page.Text;
+                        }
+                    }
+                }
+            }
+            // trim content to 2000 characters, remove spaces between lines
+            content = content.Substring(0, Math.Min(content.Length, 2000)).Replace("\n", "").Replace("\r", "").Replace("\t", "");
+            return await IndexAsync(content);
+        }
+        Console.WriteLine("File is null or empty");
+        return Redirect("/Home");
     }
 
     // TODO: To test things - to remove later
