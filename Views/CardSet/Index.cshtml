@@ -1,37 +1,58 @@
 @model IEnumerable<CardSet>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Your Card Sets";
 }
 
-<p>
-    <a asp-action="Create">Create CardSet</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    <a asp-action="Set" asp-controller="Card" asp-route-id="@item.CardSetId">@Html.DisplayFor(modelItem =>
-                    item.Name)</a>
+<!-- Mashead header-->
+<header class="masthead">
+    <div class="container px-5 py-4 text-center">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+</header>
 
-                </td>
+<section>
+<div class="container px-5 py-4">
+    <div class="row gx-5 justify-content-center"
+        <div class="col-lg-11 col-xl-9 col-xxl-8">
+            <!-- Create button -->
+            <div class="mb-5">
+                <a asp-action="Create" class="btn btn-primary rounded px-3 pb-2 mb-2 mb-lg-0 me-3">
+                    <span class="d-inline-block bi-file-plus me-2" aria-hidden="true"></span>
+                    Create a new card set
+                </a>
+            </div>
 
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.CardSetId">Edit</a> |
+            <div>
+            <!-- Page contents -->
+            @foreach (var item in Model)
+            {
+                <div class="card shadow border-0 rounded-4 mb-5">
+                    <div class="card-body p-5">
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="text-primary fw-bolder mb-2" >
+                                    <a asp-action="Set" asp-controller="Card" asp-route-id="@item.CardSetId" 
+                                        class="text-decoration-none">
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </a>
+                                </h5>
+                            </div>
+                            <div class="col col-lg-3">
+                                <a asp-action="Edit" asp-route-id="@item.CardSetId"
+                                class="btn btn-outline-primary rounded px-3 pb-2 mb-2 mb-lg-0 me-3">Edit</a>
+                            
+                                <a asp-action="Delete" asp-route-id="@item.CardSetId"
+                                class="btn btn-outline-primary rounded px-3 pb-2 mb-2 mb-lg-0 me-3">Delete</a>
 
-                    <a asp-action="Delete" asp-route-id="@item.CardSetId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+</div>
+</section>
