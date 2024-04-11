@@ -65,6 +65,11 @@ public class HomeController : Controller
         if (!User.Identity!.IsAuthenticated)
         {
             var allTemporaryCards = _cardService.CreateCardsFromTextForNonLoggedInUser(response[^1].Content!);
+            if (allTemporaryCards == null || allTemporaryCards.Count == 0)
+            {
+                Console.WriteLine("No cards created as guest user");
+                return Redirect("/Home");
+            }
             TempData["AllTemporaryCardsJSON"] = JsonSerializer.Serialize(allTemporaryCards);
             return RedirectToAction("Index", "Card");
         }
