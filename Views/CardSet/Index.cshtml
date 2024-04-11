@@ -1,38 +1,63 @@
 @model IEnumerable<CardSet>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Card Sets";
 }
 
 <p>
-    <a asp-action="Create">Create CardSet</a>
+    <a asp-action="Create" class="btn btn-primary">Create New CardSet</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+
+<style>
+    .btn-light-blue {
+        color: #fff;
+        background-color: #add8e6;
+        border-color: #add8e6;
+    }
+</style>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="thead-dark">
             <tr>
-                <td>
-                    <a asp-action="Set" asp-controller="Card" asp-route-id="@item.CardSetId">@Html.DisplayFor(modelItem =>
-                    item.Name)</a>
-
-                </td>
-
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.CardSetId">Edit</a> |
-
-                    <a asp-action="Delete" asp-route-id="@item.CardSetId">Delete</a> | 
-                    <a asp-action="DownloadPdf" asp-route-id="@item.CardSetId">PDF</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th style="width: 25%;">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <strong>
+                            <a asp-action="Set" asp-controller="Card" asp-route-id="@item.CardSetId"
+                                class="text-decoration-none">@Html.DisplayFor(modelItem => item.Name)</a>
+                        </strong>
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.CardSetId" class="btn btn-md btn-info mx-1"
+                            data-toggle="tooltip" title="Edit Card Set">
+                            <i class="fa fa-edit"></i> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.CardSetId" class="btn btn-md btn-danger mx-1"
+                            data-toggle="tooltip" title="Delete Card Set"
+                            onclick="return confirm('Are you sure you want to delete this?');">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+    </script>
+}

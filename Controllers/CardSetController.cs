@@ -10,6 +10,7 @@ using Radzen;
 
 namespace ProjectStudyTool.Controllers;
 
+[Authorize]
 public class CardSetController : Controller
 {
     private readonly ApplicationDbContext _context;

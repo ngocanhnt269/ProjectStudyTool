@@ -1,0 +1,108 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Join the Study Revolution";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+        }
+
+        .row {
+            height: 500px;
+
+        }
+
+        .col-img-bg {
+            background: url('../images/register.png') center no-repeat;
+            background-size: cover;
+        }
+
+        .form-section {
+            display: flex;
+            align-items: center;
+            /* Center the form vertically */
+            justify-content: center;
+            /* Center the form horizontally */
+            background-color: lightblue;
+            /* Light background for the form section */
+        }
+
+        .container {
+            height: 100%;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+        }
+
+        .btn-success {
+            background-color: #4CAF50;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid h-100">
+        <div class="row">
+            <!-- Form Section -->
+            <div class="col-md-6 form-section">
+                <div>
+                    <h1>@ViewData["Title"]</h1>
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post"
+                        class="needs-validation" novalidate>
+                        <h2 class="text-center">Start Your Journey Today!</h2>
+                        <p class="text-center">Unlock a personalized study experience and accelerate your learning.</p>
+                        <hr />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username"
+                                aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" type="password" class="form-control"
+                                autocomplete="new-password" aria-required="true" placeholder="Password" />
+                            <label asp-for="Input.Password">Password</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" type="password" class="form-control"
+                                autocomplete="new-password" aria-required="true" placeholder="Confirm Password" />
+                            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-success">Create
+                            Account</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Image Section -->
+            <div class="col-md-6 col-img-bg"></div>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
