@@ -26,7 +26,7 @@
 @if (loggedIn)
 {
     <p>
-        <a asp-action="Create">Create New</a>
+        <a class="btn btn-primary" asp-action="Create" asp-route-id="@ViewContext.RouteData.Values["id"]">Add New Card</a>
     </p>
 
     <table class="table">

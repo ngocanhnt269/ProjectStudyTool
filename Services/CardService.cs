@@ -160,7 +160,7 @@ public CardSet? CreateCardSetFromText(string text, string name, string userId)
     {
         var cards = _context.Cards!
             .Include(c => c.CardSet) // Include CardSet navigation property
-            .Where(c => c.CardSetId == cardSetId && c.CardSet.UserId == userId)
+            .Where(c => c.CardSetId == cardSetId && c.CardSet!.UserId == userId)
             .Select(c => new CardDto
             {
                 CardId = c.CardId,
