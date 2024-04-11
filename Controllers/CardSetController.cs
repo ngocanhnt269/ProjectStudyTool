@@ -1,8 +1,11 @@
+using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using iText.Layout.Properties;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Identity.Client.Extensions.Msal;
+using Radzen;
 
 namespace ProjectStudyTool.Controllers;
 
@@ -18,6 +21,8 @@ public class CardSetController : Controller
         _cardService = cardService; 
     }
 
+    // GET: CardSet/DownloadPdf/5
+    // TODO: position the question and answer centered on the page
     public async Task<IActionResult> DownloadPdf(int? id)
     {
         if (id == null)
@@ -41,15 +46,32 @@ public class CardSetController : Controller
         var document = new Document(pdfDocument);
         pdfWriter.SetCloseStream(false);
 
+
         // Iterate through each card in the card set
         for (int i = 0; i < cards.Count; i++)
         {
             // for each card create a new page for the question
-            document.Add(new Paragraph(cards[i].Question));
+
+            // TODO: create a div to center the text on the page
+            // Div div = new Div()
+            // .SetWidth(UnitValue.CreatePercentValue(100))
+            // .SetHeight(UnitValue.CreatePercentValue(100));
+
+            document.Add(
+                new Paragraph(cards[i].Question)
+                    .SetFontSize(24)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                );
             document.Add(new AreaBreak());
 
             // for each card create a new page for the answer
-            document.Add(new Paragraph(cards[i].Answer)); 
+            document.Add(
+                new Paragraph(cards[i].Answer)
+                    .SetFontSize(24)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                ); 
 
             // Add AreaBreak if not the last card and not on the last iteration
             if (i < cards.Count - 1)
