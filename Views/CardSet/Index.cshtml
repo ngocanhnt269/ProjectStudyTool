@@ -29,7 +29,8 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.CardSetId">Edit</a> |
 
-                    <a asp-action="Delete" asp-route-id="@item.CardSetId">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.CardSetId">Delete</a> | 
+                    <a asp-action="DownloadPdf" asp-route-id="@item.CardSetId">PDF</a>
                 </td>
             </tr>
         }

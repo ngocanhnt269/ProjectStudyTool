@@ -1,4 +1,8 @@
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace ProjectStudyTool.Controllers;
 
@@ -6,10 +10,112 @@ public class CardSetController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public CardSetController(ApplicationDbContext context)
+    private readonly CardService _cardService;
+
+    public CardSetController(ApplicationDbContext context, CardService cardService)
     {
         _context = context;
+        _cardService = cardService; 
     }
+
+    public async Task<IActionResult> DownloadPdf(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var cardSet = await _context.CardSet
+            .Include(c => c.Cards)
+            .FirstOrDefaultAsync(m => m.CardSetId == id);
+        var cards = await _cardService.GetCardsByCardSetIdAsync(id.Value); 
+
+        if (cardSet == null || cards == null || cards.Count == 0)
+        {
+            return NotFound();
+        }
+
+        MemoryStream memoryStream = new MemoryStream();
+        var pdfWriter = new PdfWriter(memoryStream);
+        var pdfDocument = new PdfDocument(pdfWriter);
+        var document = new Document(pdfDocument);
+        pdfWriter.SetCloseStream(false);
+
+        // Iterate through each card in the card set
+        for (int i = 0; i < cards.Count; i++)
+        {
+            // for each card create a new page for the question
+            document.Add(new Paragraph(cards[i].Question));
+            document.Add(new AreaBreak());
+
+            // for each card create a new page for the answer
+            document.Add(new Paragraph(cards[i].Answer)); 
+
+            // Add AreaBreak if not the last card and not on the last iteration
+            if (i < cards.Count - 1)
+            {
+                document.Add(new AreaBreak());
+            }
+        }
+
+        document.Close();
+        byte[] byteInfo = memoryStream.ToArray();
+        memoryStream.Write(byteInfo, 0, byteInfo.Length);
+        memoryStream.Position = 0;
+
+        FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf")
+        {
+        FileDownloadName = cardSet.Name + ".pdf"
+        };
+
+        return fileStreamResult;
+    }
+    // public async Task<IActionResult> DownloadPdf(int? id)
+    // {
+    //     if (id == null)
+    //     {
+    //         return NotFound();
+    //     }
+
+    //     var cardSet = await _context.CardSet
+    //         .Include(c => c.Cards)
+    //         .FirstOrDefaultAsync(m => m.CardSetId == id);
+    //     var cards = await _cardService.GetCardsByCardSetIdAsync(id.Value); 
+
+    //     if (cardSet == null)
+    //     {
+    //         return NotFound();
+    //     }
+
+    //     MemoryStream memoryStream = new MemoryStream();
+
+    //     var pdfWriter = new PdfWriter(cardSet.Name + ".pdf");
+    //     var pdfDocument = new PdfDocument(pdfWriter);
+    //     var document = new Document(pdfDocument);
+    //     pdfWriter.SetCloseStream(false);
+        
+    //     // Iterate through each card in the card set
+    //     foreach (var card in cards)
+    //     {
+    //         // for each card create a new page for the question
+    //         document.Add(new Paragraph(card.Question));
+    //         document.Add(new AreaBreak());
+    //         // for each card create a new page for the answer
+    //         document.Add(new Paragraph(card.Answer));
+    //         document.Add(new AreaBreak());
+    //     }
+
+    //     document.Close();
+    //     byte[] byteInfo = memoryStream.ToArray();
+    //     memoryStream.Write(byteInfo, 0, byteInfo.Length);
+    //     memoryStream.Position = 0;
+
+    //     FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf"); 
+
+    //     return fileStreamResult;
+    // }
+
+
 
     // GET: CardSet
     public IActionResult Index()
