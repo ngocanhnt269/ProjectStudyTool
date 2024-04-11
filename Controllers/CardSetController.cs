@@ -1,3 +1,4 @@
+using iText.IO.Image;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
@@ -45,40 +46,70 @@ public class CardSetController : Controller
         var pdfDocument = new PdfDocument(pdfWriter);
         var document = new Document(pdfDocument);
         pdfWriter.SetCloseStream(false);
+        
+        // create table with 2 columns and 1 row for each card with a header
+        Table table = new Table(3, false);
 
+        // title
+        Div titleDiv = new Div();
+
+        // string imagePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "logo.ico");
+        // try {
+        //     ImageData imageData = ImageDataFactory.Create(imagePath);
+        //     Image image = new Image(imageData);
+        //     div.Add(image);
+        // } catch (Exception ex) {
+        //     Console.WriteLine(ex.Message);
+        // }
+
+        // add title to div
+        Paragraph logo = new Paragraph("Project Study Tool")
+            // .SetTextAlignment(TextAlignment.CENTER)
+            .SetFontSize(24);
+        Paragraph title = new Paragraph(cardSet.Name)
+            // .SetTextAlignment(TextAlignment.CENTER)
+            .SetFontSize(24);
+        titleDiv.Add(logo);
+        titleDiv.Add(title);
+        document.Add(titleDiv);
+
+
+        // Headings
+        Cell cellQuestionId = new Cell(1,1)
+        .SetTextAlignment(TextAlignment.CENTER)
+        .Add(new Paragraph("Question ID"));
+        Cell cellQuestion = new Cell(1,1)
+        // .SetTextAlignment(TextAlignment.CENTER)
+        .Add(new Paragraph("Question"));
+        Cell cellAnswer = new Cell(1,1)
+        // .SetTextAlignment(TextAlignment.CENTER)
+        .Add(new Paragraph("Answer"));
+
+        table.AddCell(cellQuestionId);
+        table.AddCell(cellQuestion);
+        table.AddCell(cellAnswer);
 
         // Iterate through each card in the card set
+        // and add the question ID, question, and answer to the table
         for (int i = 0; i < cards.Count; i++)
         {
-            // for each card create a new page for the question
+            Cell cellQuestionIdValue = new Cell(1,1)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .Add(new Paragraph(cards[i].QuestionId.ToString()));
+            Cell cellQuestionValue = new Cell(1,1)
+                // .SetTextAlignment(TextAlignment.CENTER)
+                .Add(new Paragraph(cards[i].Question));
+            Cell cellAnswerValue = new Cell(1,1)
+                // .SetTextAlignment(TextAlignment.CENTER)
+                .Add(new Paragraph(cards[i].Answer));
 
-            // TODO: create a div to center the text on the page
-            // Div div = new Div()
-            // .SetWidth(UnitValue.CreatePercentValue(100))
-            // .SetHeight(UnitValue.CreatePercentValue(100));
-
-            document.Add(
-                new Paragraph(cards[i].Question)
-                    .SetFontSize(24)
-                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                );
-            document.Add(new AreaBreak());
-
-            // for each card create a new page for the answer
-            document.Add(
-                new Paragraph(cards[i].Answer)
-                    .SetFontSize(24)
-                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                ); 
-
-            // Add AreaBreak if not the last card and not on the last iteration
-            if (i < cards.Count - 1)
-            {
-                document.Add(new AreaBreak());
-            }
+            table.AddCell(cellQuestionIdValue);
+            table.AddCell(cellQuestionValue);
+            table.AddCell(cellAnswerValue);
         }
+
+        // Add the table to the document
+        document.Add(table);
 
         document.Close();
         byte[] byteInfo = memoryStream.ToArray();
@@ -92,52 +123,6 @@ public class CardSetController : Controller
 
         return fileStreamResult;
     }
-    // public async Task<IActionResult> DownloadPdf(int? id)
-    // {
-    //     if (id == null)
-    //     {
-    //         return NotFound();
-    //     }
-
-    //     var cardSet = await _context.CardSet
-    //         .Include(c => c.Cards)
-    //         .FirstOrDefaultAsync(m => m.CardSetId == id);
-    //     var cards = await _cardService.GetCardsByCardSetIdAsync(id.Value); 
-
-    //     if (cardSet == null)
-    //     {
-    //         return NotFound();
-    //     }
-
-    //     MemoryStream memoryStream = new MemoryStream();
-
-    //     var pdfWriter = new PdfWriter(cardSet.Name + ".pdf");
-    //     var pdfDocument = new PdfDocument(pdfWriter);
-    //     var document = new Document(pdfDocument);
-    //     pdfWriter.SetCloseStream(false);
-        
-    //     // Iterate through each card in the card set
-    //     foreach (var card in cards)
-    //     {
-    //         // for each card create a new page for the question
-    //         document.Add(new Paragraph(card.Question));
-    //         document.Add(new AreaBreak());
-    //         // for each card create a new page for the answer
-    //         document.Add(new Paragraph(card.Answer));
-    //         document.Add(new AreaBreak());
-    //     }
-
-    //     document.Close();
-    //     byte[] byteInfo = memoryStream.ToArray();
-    //     memoryStream.Write(byteInfo, 0, byteInfo.Length);
-    //     memoryStream.Position = 0;
-
-    //     FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf"); 
-
-    //     return fileStreamResult;
-    // }
-
-
 
     // GET: CardSet
     public IActionResult Index()

@@ -185,8 +185,6 @@ public class CardService
         return await _context.Cards!.Where(c => c.CardSetId == cardSetId).ToListAsync();
     }
 
-
-
     // Get all cards in a card set
     public List<CardDto> GetCardDtosByCardSetId(int cardSetId)
     {
