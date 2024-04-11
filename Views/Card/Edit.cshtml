@@ -18,11 +18,7 @@
                 <select asp-for="CardSetId" class="form-control" asp-items="ViewBag.CardSetId"></select>
                 <span asp-validation-for="CardSetId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="QuestionId" class="control-label"></label>
-                <input asp-for="QuestionId" class="form-control" />
-                <span asp-validation-for="QuestionId" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="QuestionId" />
             <div class="form-group">
                 <label asp-for="Question" class="control-label"></label>
                 <input asp-for="Question" class="form-control" />
@@ -35,14 +31,12 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-secondary" asp-controller="Card" asp-action="Set" asp-route-id="@Model.CardSetId">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
