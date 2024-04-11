@@ -68,22 +68,36 @@ public class CardController : Controller
     //     return View(card);
     // }
 
-    // POST: Card/Create/{cardSetId}
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Card card) {
+    public async Task<IActionResult> Create(Card card)
+    {
         var cardSetId = Convert.ToInt32(RouteData.Values["id"]);
         if (ModelState.IsValid)
         {
+            if (_context == null || _context.Cards == null)
+            {
+                throw new InvalidOperationException("The context or Cards collection is null.");
+            } 
+            // Get the highest QuestionId for the given CardSetId
+            var highestQuestionId = _context.Cards.Where(c => c.CardSetId == cardSetId).Max(c => (int?)c.QuestionId) ?? 0;
+            
+            // Increment the QuestionId by 1
+            card.QuestionId = highestQuestionId + 1;
+
+            // Set the CardSetId
             card.CardSetId = cardSetId;
+
+            // Add the card to the context and save changes
             _context.Add(card);
             await _context.SaveChangesAsync();
+            
+            // Redirect to the set view with the appropriate id
             return RedirectToAction("Set", "Card", new { id = cardSetId });
         }
-        // ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
         return View(card);
     }
-
+ 
     // GET: Card/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
