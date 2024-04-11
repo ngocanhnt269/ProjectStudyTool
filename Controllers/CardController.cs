@@ -46,27 +46,58 @@ public class CardController : Controller
     // GET: Card/Create
     public IActionResult Create()
     {
-        ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name");
+        ViewData["CardSetName"] = _context.CardSet.FirstOrDefault(c => c.CardSetId == Convert.ToInt32(RouteData.Values["id"]))?.Name;
+        // ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name");
         return View();
     }
 
     // POST: Card/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // [HttpPost]
+    // [ValidateAntiForgeryToken]
+    // public async Task<IActionResult> Create([Bind("CardId,CardSetId,QuestionId,Question,Answer")] Card card)
+    // {
+    //     if (ModelState.IsValid)
+    //     {
+    //         _context.Add(card);
+    //         await _context.SaveChangesAsync();
+    //         return RedirectToAction(nameof(Index));
+    //     }
+    //     ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
+    //     return View(card);
+    // }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("CardId,CardSetId,QuestionId,Question,Answer")] Card card)
+    public async Task<IActionResult> Create(Card card)
     {
+        var cardSetId = Convert.ToInt32(RouteData.Values["id"]);
         if (ModelState.IsValid)
         {
+            if (_context == null || _context.Cards == null)
+            {
+                throw new InvalidOperationException("The context or Cards collection is null.");
+            } 
+            // Get the highest QuestionId for the given CardSetId
+            var highestQuestionId = _context.Cards.Where(c => c.CardSetId == cardSetId).Max(c => (int?)c.QuestionId) ?? 0;
+            
+            // Increment the QuestionId by 1
+            card.QuestionId = highestQuestionId + 1;
+
+            // Set the CardSetId
+            card.CardSetId = cardSetId;
+
+            // Add the card to the context and save changes
             _context.Add(card);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            
+            // Redirect to the set view with the appropriate id
+            return RedirectToAction("Set", "Card", new { id = cardSetId });
         }
-        ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
         return View(card);
     }
-
+ 
     // GET: Card/Edit/5
     public async Task<IActionResult> Edit(int? id)
     {
@@ -114,7 +145,7 @@ public class CardController : Controller
                     throw;
                 }
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Set", "Card", new { id = card.CardSetId });
         }
         ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
         return View(card);
@@ -151,7 +182,7 @@ public class CardController : Controller
         }
 
         await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction("Set", "Card", new { id = card!.CardSetId });
     }
 
     private bool CardExists(int id)
@@ -172,15 +203,19 @@ public class CardController : Controller
             Console.WriteLine("User is not the owner of the card set");
             return RedirectToAction("Index", "CardSet");
         }
+        // add the card set id to the view data
+        ViewBag.CardSetName = _context.CardSet.FirstOrDefault(c => c.CardSetId == cardSetId)?.Name;
 
-        var cardList = new List<Card>();
+        // get all cards in the card set and return as a list
+        var cardList = new List<CardDto>();
         try
         {
-            cardList = _cardService.GetCardsByCardSetId(cardSetId);
+            cardList = _cardService.GetCardDtosByCardSetId(cardSetId);
             if (cardList.Count == 0)
             {
                 Console.WriteLine("No cards found for card set");
             }
+
         }
         catch (Exception e)
         {

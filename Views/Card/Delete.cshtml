@@ -1,14 +1,13 @@
 @model ProjectStudyTool.Models.Card
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Card";
 }
 
-<h1>Delete</h1>
+<h1>@ViewData["Title"]</h1>
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Card</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -40,6 +39,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="CardId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a class="btn btn-secondary" asp-action="Set" asp-controller="Card" asp-route-id="@Model.CardSetId">Back to List</a>
     </form>
 </div>
