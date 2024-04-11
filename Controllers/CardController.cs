@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ProjectStudyTool.Controllers;
 
+[Authorize]
 public class CardController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -16,6 +17,7 @@ public class CardController : Controller
 
 
     // GET: Card
+    [AllowAnonymous]
     public IActionResult Index()
     {
         var cardList = new List<Card>();
