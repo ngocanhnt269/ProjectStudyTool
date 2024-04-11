@@ -1,9 +1,11 @@
 using iText.IO.Image;
+using iText.Kernel.Colors;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Identity.Client.Extensions.Msal;
 using Radzen;
@@ -24,7 +26,7 @@ public class CardSetController : Controller
     }
 
     // GET: CardSet/DownloadPdf/5
-    public async Task<IActionResult> DownloadPdf(int? id)
+    public async Task<IActionResult> Download(int? id)
     {
         if (id == null)
         {
@@ -53,26 +55,12 @@ public class CardSetController : Controller
         // title
         Div titleDiv = new Div();
 
-        // string imagePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "logo.ico");
-        // try {
-        //     ImageData imageData = ImageDataFactory.Create(imagePath);
-        //     Image image = new Image(imageData);
-        //     div.Add(image);
-        // } catch (Exception ex) {
-        //     Console.WriteLine(ex.Message);
-        // }
+        Paragraph logoAndTitle = new Paragraph()
+            .SetFontSize(24)
+            .Add(new Text("QuizWhiz ").SetFontColor(ColorConstants.BLACK))
+            .Add(new Text(cardSet.Name).SetFontColor(ColorConstants.DARK_GRAY).SetFontSize(18));
 
-        // add title to div
-        Paragraph logo = new Paragraph("Project Study Tool")
-            // .SetTextAlignment(TextAlignment.CENTER)
-            .SetFontSize(24);
-        Paragraph title = new Paragraph(cardSet.Name)
-            // .SetTextAlignment(TextAlignment.CENTER)
-            .SetFontSize(24);
-        titleDiv.Add(logo);
-        titleDiv.Add(title);
-        document.Add(titleDiv);
-
+        document.Add(logoAndTitle);
 
         // Headings
         Cell cellQuestionId = new Cell(1,1)
@@ -89,8 +77,7 @@ public class CardSetController : Controller
         table.AddCell(cellQuestion);
         table.AddCell(cellAnswer);
 
-        // Iterate through each card in the card set
-        // and add the question ID, question, and answer to the table
+        // Add the cards to the table
         for (int i = 0; i < cards.Count; i++)
         {
             Cell cellQuestionIdValue = new Cell(1,1)
