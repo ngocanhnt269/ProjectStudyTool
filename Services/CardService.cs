@@ -314,12 +314,19 @@ public class CardService
     // Create cards from text for non-logged in users
     public List<Card> CreateCardsFromTextForNonLoggedInUser(string text) {
         var cardList = new List<Card>();
-        var cards = TextConverter.convertTextToCardArray(text);
-        var cardNumber = 1;
-        foreach (var card in cards)
+        try
         {
-            card.QuestionId = cardNumber++;
-            cardList.Add(card);
+            var cards = TextConverter.convertTextToCardArray(text);
+            var cardNumber = 1;
+            foreach (var card in cards)
+            {
+                card.QuestionId = cardNumber++;
+                cardList.Add(card);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error creating cards: " + e.Message);
         }
         return cardList;
     }
