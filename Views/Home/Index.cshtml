@@ -38,10 +38,10 @@
 
     <div class="container px-5 py-4 mb-5">
         <h2 class="fw-bolder mb-3 text-light">Upload a text or PDF file:</h2>
-        <form method="post" enctype="multipart/form-data" action="/Index/FileUpload">
+        <form method="post" enctype="multipart/form-data" action="/Index/FileUpload" id="uploadToGenerateCardsForm">
             <input type="file" name="file" class="form-control" accept=".txt, .pdf" />
-            <button type="submit" id="uploadBtn" class="btn btn-light btn-lg px-3 pb-2 mt-4 mb-2 mb-lg-0 me-3" >
-                Upload
+            <button type="submit" id="uploadBtn" class="input-group-text btn btn-light btn-lg px-3 pb-2 mt-4 mb-2 mb-lg-0 me-3" >
+                Upload + Generate
             </button>
         </form>
     </div>
@@ -73,6 +73,20 @@
     });
 
     // on submitting the form, disable the button and show spinner
+    document.querySelector('#uploadToGenerateCardsForm').addEventListener('submit', function (event) {
+        // form validation
+        let fileInput = document.querySelector('input[name="file"]');
+        if (fileInput.files.length === 0) {
+            alert('Please select a file');
+            event.preventDefault(); // prevent form submission
+            return;
+        }
+        // disable buttons
+        document.querySelector('#uploadBtn').disabled = true;
+        // show spinner
+        document.querySelector('#uploadBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+    });
+    
     document.querySelector('#generateCardsForm').addEventListener('submit', function (event) {
         // form validation
         if (content.value.trim() === '') {
@@ -87,6 +101,5 @@
 
         // show spinner
         document.querySelector('#generateBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
-        document.querySelector('#generateBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
     });
 </script>
