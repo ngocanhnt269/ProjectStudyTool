@@ -85,44 +85,44 @@ public class CardService
     //     }
     //     return cardSet;
     // }
-public CardSet? CreateCardSetFromText(string text, string name, string userId)
-{
-    // Convert the text to an array of cards
-    var cards = TextConverter.convertTextToCardArray(text);
-
-    if (cards.Length == 0)
+    public CardSet? CreateCardSetFromText(string text, string name, string userId)
     {
-        Console.WriteLine("No cards found in text");
-        return null;
+        // Convert the text to an array of cards
+        var cards = TextConverter.convertTextToCardArray(text);
+
+        if (cards.Length == 0)
+        {
+            Console.WriteLine("No cards found in text");
+            return null;
+        }
+
+        // Create a new card set
+        var cardSet = new CardSet
+        {
+            Name = name,
+            UserId = userId,
+            CreatedDate = DateTime.Now,
+            ModifiedDate = DateTime.Now,
+            Cards = new List<Card>()  // Initialize the Cards collection
+        };
+
+        // Add the card set to the database
+        PersistCardSet(cardSet);
+        var cardNumber = 1;
+
+        // Assign the CardSetId to each card and add them to the card set
+        foreach (var card in cards)
+        {
+            card.CardSetId = cardSet.CardSetId;
+            card.QuestionId = cardNumber++;
+            cardSet.Cards.Add(card);  // Add card to the card set's collection
+        }
+
+        // Save changes to the database
+        _context.SaveChanges();
+
+        return cardSet;
     }
-
-    // Create a new card set
-    var cardSet = new CardSet
-    {
-        Name = name,
-        UserId = userId,
-        CreatedDate = DateTime.Now,
-        ModifiedDate = DateTime.Now,
-        Cards = new List<Card>()  // Initialize the Cards collection
-    };
-
-    // Add the card set to the database
-    PersistCardSet(cardSet);
-    var cardNumber = 1;
-
-    // Assign the CardSetId to each card and add them to the card set
-    foreach (var card in cards)
-    {
-        card.CardSetId = cardSet.CardSetId;
-        card.QuestionId = cardNumber++;
-        cardSet.Cards.Add(card);  // Add card to the card set's collection
-    }
-
-    // Save changes to the database
-    _context.SaveChanges();
-
-    return cardSet;
-}
 
     public List<Card> CreateCardsByCardSetId(int cardSetId)
     {
@@ -179,27 +179,33 @@ public CardSet? CreateCardSetFromText(string text, string name, string userId)
         return _context.Cards!.Where(c => c.CardSetId == cardSetId).ToList();
     }
 
-// Get all cards in a card set
-public List<CardDto> GetCardDtosByCardSetId(int cardSetId)
-{
-    var cardSet = _context.Cards!
-        .Include(c => c.CardSet) // Include CardSet navigation property
-        .Where(c => c.CardSetId == cardSetId)
-        .Select(c => new CardDto
-        {
-            CardId = c.CardId,
-            Question = c.Question,
-            Answer = c.Answer
-            // Map other properties as needed
-        })
-        .ToList();
-    if (cardSet != null)
+    // Get all cards in a card set Async
+    public async Task<List<Card>> GetCardsByCardSetIdAsync(int cardSetId)
     {
-        return cardSet;
+        return await _context.Cards!.Where(c => c.CardSetId == cardSetId).ToListAsync();
     }
-    // Return an empty list if card set is not found
-    return new List<CardDto>();
-}
+
+    // Get all cards in a card set
+    public List<CardDto> GetCardDtosByCardSetId(int cardSetId)
+    {
+        var cardSet = _context.Cards!
+            .Include(c => c.CardSet) // Include CardSet navigation property
+            .Where(c => c.CardSetId == cardSetId)
+            .Select(c => new CardDto
+            {
+                CardId = c.CardId,
+                Question = c.Question,
+                Answer = c.Answer
+                // Map other properties as needed
+            })
+            .ToList();
+        if (cardSet != null)
+        {
+            return cardSet;
+        }
+        // Return an empty list if card set is not found
+        return new List<CardDto>();
+    }
 
     /**
         Card
@@ -308,12 +314,19 @@ public List<CardDto> GetCardDtosByCardSetId(int cardSetId)
     // Create cards from text for non-logged in users
     public List<Card> CreateCardsFromTextForNonLoggedInUser(string text) {
         var cardList = new List<Card>();
-        var cards = TextConverter.convertTextToCardArray(text);
-        var cardNumber = 1;
-        foreach (var card in cards)
+        try
         {
-            card.QuestionId = cardNumber++;
-            cardList.Add(card);
+            var cards = TextConverter.convertTextToCardArray(text);
+            var cardNumber = 1;
+            foreach (var card in cards)
+            {
+                card.QuestionId = cardNumber++;
+                cardList.Add(card);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error creating cards: " + e.Message);
         }
         return cardList;
     }

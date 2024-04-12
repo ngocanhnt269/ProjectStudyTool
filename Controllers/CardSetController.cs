@@ -1,4 +1,14 @@
+using iText.IO.Image;
+using iText.Kernel.Colors;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Identity.Client.Extensions.Msal;
+using Radzen;
 
 namespace ProjectStudyTool.Controllers;
 
@@ -7,9 +17,98 @@ public class CardSetController : Controller
 {
     private readonly ApplicationDbContext _context;
 
-    public CardSetController(ApplicationDbContext context)
+    private readonly CardService _cardService;
+
+    public CardSetController(ApplicationDbContext context, CardService cardService)
     {
         _context = context;
+        _cardService = cardService; 
+    }
+
+    // GET: CardSet/DownloadPdf/5
+    public async Task<IActionResult> Download(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var cardSet = await _context.CardSet
+            .Include(c => c.Cards)
+            .FirstOrDefaultAsync(m => m.CardSetId == id);
+        var cards = await _cardService.GetCardsByCardSetIdAsync(id.Value); 
+
+        if (cardSet == null || cards == null || cards.Count == 0)
+        {
+            return NotFound();
+        }
+
+        MemoryStream memoryStream = new MemoryStream();
+        var pdfWriter = new PdfWriter(memoryStream);
+        var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfWriter);
+        var document = new Document(pdfDocument);
+        pdfWriter.SetCloseStream(false);
+        
+        // create table with 2 columns and 1 row for each card with a header
+        Table table = new Table(3, false);
+
+        // title
+        Div titleDiv = new Div();
+
+        Paragraph logoAndTitle = new Paragraph()
+            .SetFontSize(24)
+            .Add(new Text("QuizWhiz ").SetFontColor(ColorConstants.BLACK))
+            .Add(new Text(cardSet.Name).SetFontColor(ColorConstants.DARK_GRAY).SetFontSize(18));
+
+        document.Add(logoAndTitle);
+
+        // Headings
+        Cell cellQuestionId = new Cell(1,1)
+        .SetTextAlignment(TextAlignment.CENTER)
+        .Add(new Paragraph("Question ID"));
+        Cell cellQuestion = new Cell(1,1)
+        // .SetTextAlignment(TextAlignment.CENTER)
+        .Add(new Paragraph("Question"));
+        Cell cellAnswer = new Cell(1,1)
+        // .SetTextAlignment(TextAlignment.CENTER)
+        .Add(new Paragraph("Answer"));
+
+        table.AddCell(cellQuestionId);
+        table.AddCell(cellQuestion);
+        table.AddCell(cellAnswer);
+
+        // Add the cards to the table
+        for (int i = 0; i < cards.Count; i++)
+        {
+            Cell cellQuestionIdValue = new Cell(1,1)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .Add(new Paragraph(cards[i].QuestionId.ToString()));
+            Cell cellQuestionValue = new Cell(1,1)
+                // .SetTextAlignment(TextAlignment.CENTER)
+                .Add(new Paragraph(cards[i].Question));
+            Cell cellAnswerValue = new Cell(1,1)
+                // .SetTextAlignment(TextAlignment.CENTER)
+                .Add(new Paragraph(cards[i].Answer));
+
+            table.AddCell(cellQuestionIdValue);
+            table.AddCell(cellQuestionValue);
+            table.AddCell(cellAnswerValue);
+        }
+
+        // Add the table to the document
+        document.Add(table);
+
+        document.Close();
+        byte[] byteInfo = memoryStream.ToArray();
+        memoryStream.Write(byteInfo, 0, byteInfo.Length);
+        memoryStream.Position = 0;
+
+        FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf")
+        {
+        FileDownloadName = cardSet.Name + ".pdf"
+        };
+
+        return fileStreamResult;
     }
 
     // GET: CardSet
