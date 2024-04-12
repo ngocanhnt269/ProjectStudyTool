@@ -32,28 +32,35 @@
 <div class="text-center bg-gradient-primary-to-secondary py-5">
     <div class="container px-5 py-4">
         <div class="text-center">
-            <h1 class="display-5 fw-bolder mb-0 text-light">Start Studying:</h1>
+            <h1 class="display-5 fw-bolder mb-0 text-light">Start Studying</h1>
         </div>
     </div>
-    <form method="post" id="generateCardsForm">
-        <component type="typeof(ProjectStudyTool.Components.Home.PromptForm)" render-mode="ServerPrerendered" />
-        <button type="submit" id="generateBtn" class="btn btn-light btn-lg px-3 pb-2 mb-2 mb-lg-0 me-3" >
-            Generate
-        </button>
-        <button type="button" id="clearBtn" class="btn btn-outline-light btn-lg px-3 pb-2 mb-2 mb-lg-0 me-3 " >
-            Clear
-        </button>
-    </form>
+
+    <div class="container px-5 py-4 mb-5">
+        <h2 class="fw-bolder mb-3 text-light">Upload a text or PDF file:</h2>
+        <form method="post" enctype="multipart/form-data" action="/Index/FileUpload">
+            <input type="file" name="file" class="form-control" accept=".txt, .pdf" />
+            <button type="submit" id="uploadBtn" class="btn btn-light btn-lg px-3 pb-2 mt-4 mb-2 mb-lg-0 me-3" >
+                Upload
+            </button>
+        </form>
+    </div>
+
+
+    <div>
+        <h2 class="fw-bolder mb-0 text-light">Or enter your notes:</h2>
+        <form method="post" id="generateCardsForm">
+            <component type="typeof(ProjectStudyTool.Components.Home.PromptForm)" render-mode="ServerPrerendered" />
+            <button type="submit" id="generateBtn" class="btn btn-light btn-lg px-3 pb-2 mb-2 mb-lg-0 me-3" >
+                Generate
+            </button>
+            <button type="button" id="clearBtn" class="btn btn-outline-light btn-lg px-3 pb-2 mb-2 mb-lg-0 me-3 " >
+                Clear
+            </button>
+        </form>
+    </div>
 </div>
 
-
-<div>
-    <form method="post" enctype="multipart/form-data" action="/Index/FileUpload">
-        <input type="file" name="file" class="form-control" accept=".txt, .pdf"/>
-        <input type="submit" value="Upload" />
-    </form>
-
-</div>
 
 
 
@@ -80,5 +87,6 @@
 
         // show spinner
         document.querySelector('#generateBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+        document.querySelector('#generateBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Uploading...';
     });
 </script>
