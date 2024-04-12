@@ -2,40 +2,104 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="px-4 py-5 mt-3 mb-2 text-center">
-    <h1 class="display-3">Your Favourite Study Tool</h1>
-    <div class="col-lg-8 pt-3 mx-auto blockquote">
-        <p>Ace your next quiz with <mark>QuizWiz</mark>, our AI-powered flashcard generator.</p>
-        <p>Enter your text below and press <mark class="success">Generate</mark>, then wait for the set of questions to appear and you’re good to go!</p>
-        <p>Be a <mark>quiz wiz</mark> and create an account to save your card sets.</p>
+<!-- Mashead header-->
+<header class="masthead">
+    <div class="container px-5 py-4">
+        <div class="row gx-5 align-items-center">
+            <div class="col-lg-6">
+                <!-- Mashead text -->
+                <div class="mb-5 mb-lg-0 text-center text-lg-start">
+                    <h1 class="display-1 lh-1 mb-3">Your Favourite Study Tool</h1>
+                    <div class="lead fw-normal text-muted mb-5">
+                        <p>Ace your next quiz with <mark>QuizWiz</mark>, our AI-powered flashcard generator.</p>
+                        <p>Enter your text below and press <mark class="secondary">Generate</mark>, then wait for the set
+                            of questions to appear and you’re good to go!</p>
+                        <p>Be a <mark>quiz wiz</mark> and create an account to save your card sets.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Accompanying image -->
+            <div class="col-lg-6">
+                <div class="ms-4">
+                    <img class="w-100" src="/img/illustrations/card.png" alt="QuizWiz Card" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</header>
+
+<div class="text-center bg-gradient-primary-to-secondary py-5">
+    <div class="container px-5 py-4">
+        <div class="text-center">
+            <h1 class="display-5 fw-bolder mb-0 text-light">Start Studying</h1>
+        </div>
+    </div>
+
+    <div class="container px-5 py-4 mb-5">
+        <h2 class="fw-bolder mb-3 text-light">Upload a text or PDF file:</h2>
+        <form method="post" enctype="multipart/form-data" action="/Index/FileUpload" id="uploadToGenerateCardsForm">
+            <input type="file" name="file" class="form-control" accept=".txt, .pdf" />
+            <button type="submit" id="uploadBtn" class="input-group-text btn btn-light btn-lg px-3 pb-2 mt-4 mb-2 mb-lg-0 me-3" >
+                Upload + Generate
+            </button>
+        </form>
+    </div>
+
+
+    <div>
+        <h2 class="fw-bolder mb-0 text-light">Or enter your notes:</h2>
+        <form method="post" id="generateCardsForm">
+            <component type="typeof(ProjectStudyTool.Components.Home.PromptForm)" render-mode="ServerPrerendered" />
+            <button type="submit" id="generateBtn" class="btn btn-light btn-lg px-3 pb-2 mb-2 mb-lg-0 me-3" >
+                Generate
+            </button>
+            <button type="button" id="clearBtn" class="btn btn-outline-light btn-lg px-3 pb-2 mb-2 mb-lg-0 me-3 " >
+                Clear
+            </button>
+        </form>
     </div>
 </div>
 
-
-<form method="post">
-    <component type="typeof(ProjectStudyTool.Components.Home.PromptForm)" render-mode="ServerPrerendered" />
-    <div class="d-flex gap-3 col-2 mx-auto my-3 py-4">
-        <input type="submit" value="Generate" class="btn btn-success btn-lg" />
-        <input type="button" value="Clear" class="btn btn-outline-secondary btn-lg " />
-    </div>
-</form>
-
-
-<div>
-    <form method="post" enctype="multipart/form-data" action="/Index/FileUpload">
-        <input type="file" name="file" class="form-control" accept=".txt, .pdf"/>
-        <input type="submit" value="Upload" />
-    </form>
-
-</div>
 
 
 
 <script>
     let content = document.getElementById('userContent');
     // Clear the textarea
-    document.querySelector('input[type="button"]').addEventListener('click', function () {
+    document.querySelector('#clearBtn').addEventListener('click', function () {
         content.value = '';
         updateCharacterCount();
+    });
+
+    // on submitting the form, disable the button and show spinner
+    document.querySelector('#uploadToGenerateCardsForm').addEventListener('submit', function (event) {
+        // form validation
+        let fileInput = document.querySelector('input[name="file"]');
+        if (fileInput.files.length === 0) {
+            alert('Please select a file');
+            event.preventDefault(); // prevent form submission
+            return;
+        }
+        // disable buttons
+        document.querySelector('#uploadBtn').disabled = true;
+        // show spinner
+        document.querySelector('#uploadBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+    });
+    
+    document.querySelector('#generateCardsForm').addEventListener('submit', function (event) {
+        // form validation
+        if (content.value.trim() === '') {
+            alert('Content cannot be blank');
+            event.preventDefault(); // prevent form submission
+            return;
+        }
+
+        // disable buttons
+        document.querySelector('#generateBtn').disabled = true;
+        document.querySelector('#clearBtn').disabled = true;
+
+        // show spinner
+        document.querySelector('#generateBtn').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
     });
 </script>

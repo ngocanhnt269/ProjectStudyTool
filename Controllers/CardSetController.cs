@@ -45,7 +45,7 @@ public class CardSetController : Controller
 
         MemoryStream memoryStream = new MemoryStream();
         var pdfWriter = new PdfWriter(memoryStream);
-        var pdfDocument = new PdfDocument(pdfWriter);
+        var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfWriter);
         var document = new Document(pdfDocument);
         pdfWriter.SetCloseStream(false);
         

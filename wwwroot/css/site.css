@@ -73,9 +73,10 @@ table {
 }
 
 mark {
-  background-color: rgb(183, 227, 255);
+  background-color: var(--bs-blue);
   border-radius: 0.35rem;
+  color: var(--bs-white);
 }
-mark.success {
-  background-color: #99fdce;
+mark.secondary {
+  background-color: var(--bs-secondary);
 }
