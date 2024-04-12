@@ -20,15 +20,12 @@
     </div>
 </form>
 
-@* I want to have area to upload a document *@
+
 <div>
-
-    @* <input type="file" name="file" class="form-control" accept=".txt, .pdf, .docx"/> *@
-
-<form method="post" enctype="multipart/form-data" action="/Index/FileUpload">
-    <input type="file" name="file" class="form-control" accept=".txt, .pdf"/>
-    <input type="submit" value="Upload" />
-</form>
+    <form method="post" enctype="multipart/form-data" action="/Index/FileUpload">
+        <input type="file" name="file" class="form-control" accept=".txt, .pdf"/>
+        <input type="submit" value="Upload" />
+    </form>
 
 </div>
 

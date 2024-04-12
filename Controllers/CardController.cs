@@ -53,22 +53,6 @@ public class CardController : Controller
         return View();
     }
 
-    // POST: Card/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    // [HttpPost]
-    // [ValidateAntiForgeryToken]
-    // public async Task<IActionResult> Create([Bind("CardId,CardSetId,QuestionId,Question,Answer")] Card card)
-    // {
-    //     if (ModelState.IsValid)
-    //     {
-    //         _context.Add(card);
-    //         await _context.SaveChangesAsync();
-    //         return RedirectToAction(nameof(Index));
-    //     }
-    //     ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
-    //     return View(card);
-    // }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
