@@ -13,7 +13,7 @@ public class OpenAiService
   public OpenAiService()
   {
     endpoint = System.Configuration.ConfigurationManager.AppSettings["endpoint"]!;
-    apiKey = System.Configuration.ConfigurationManager.AppSettings["api-key"]!;
+    apiKey = System.Configuration.ConfigurationManager.AppSettings["apiKey"]!;
     model = System.Configuration.ConfigurationManager.AppSettings["model"]!;
   }
 

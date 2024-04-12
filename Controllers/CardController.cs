@@ -53,22 +53,6 @@ public class CardController : Controller
         return View();
     }
 
-    // POST: Card/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    // [HttpPost]
-    // [ValidateAntiForgeryToken]
-    // public async Task<IActionResult> Create([Bind("CardId,CardSetId,QuestionId,Question,Answer")] Card card)
-    // {
-    //     if (ModelState.IsValid)
-    //     {
-    //         _context.Add(card);
-    //         await _context.SaveChangesAsync();
-    //         return RedirectToAction(nameof(Index));
-    //     }
-    //     ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
-    //     return View(card);
-    // }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -113,7 +97,11 @@ public class CardController : Controller
         {
             return NotFound();
         }
-        ViewData["CardSetId"] = new SelectList(_context.Set<CardSet>(), "CardSetId", "Name", card.CardSetId);
+        // only get the card sets of the current user
+        var currentUserId = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name)?.Id;
+        ViewData["CardSetId"] = new SelectList(_context.CardSet.Where(c => c.UserId == currentUserId), 
+            "CardSetId", "Name", card.CardSetId);
+        
         return View(card);
     }
 

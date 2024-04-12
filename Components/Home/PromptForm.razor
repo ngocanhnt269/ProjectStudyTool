@@ -2,16 +2,16 @@
 @inject ApplicationDbContext dbContext
 @inject NavigationManager NavigationManager
 
-<div class="rz-px-12 rz-text-align-center">
+<div class="text-align-center py-4">
   <RadzenColumn Size="12">
     <RadzenFormField AllowFloatingLabel="false" Text="Enter study contents here" Variant="@variant" >
       <RadzenTextArea @bind-Value="@value" Cols="120" Rows="15" 
         id="userContent" oninput="updateCharacterCount()" Name="userContent" MaxLength=@MAX_LENGTH
         />
     </RadzenFormField>
-  <div class="text-muted py-2">
-    <small id="characterCount">@value.Length/@MAX_LENGTH characters</small>
-  </div>
+    <div class="text-light py-2">
+      <small id="characterCount">@value.Length/@MAX_LENGTH characters</small>
+    </div>
   </RadzenColumn>
 </div>
 
