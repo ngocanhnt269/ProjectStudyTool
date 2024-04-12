@@ -57,7 +57,7 @@ public class CardSetController : Controller
 
         Paragraph logoAndTitle = new Paragraph()
             .SetFontSize(24)
-            .Add(new Text("QuizWhiz ").SetFontColor(ColorConstants.BLACK))
+            .Add(new Text("QuizWiz ").SetFontColor(ColorConstants.BLACK))
             .Add(new Text(cardSet.Name).SetFontColor(ColorConstants.DARK_GRAY).SetFontSize(18));
 
         document.Add(logoAndTitle);
